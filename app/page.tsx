@@ -19,6 +19,8 @@ type PatchEntry = {
   items: string[];
 };
 
+type MobileModal = "contact" | "ios" | "windows" | "patch" | null;
+
 const projectCards: ProjectCard[] = [
   {
     title: "Digital Closet",
@@ -51,10 +53,10 @@ const projectCards: ProjectCard[] = [
     title: "Iron engine",
     description: "Organize. Optimize. Build. Plan. Lift.",
     href: "/iron-engine",
-    imageType: "image",
-    mediaSrc: "/images/iron-engine.png",
+    imageType: "video",
+    mediaSrc: "/images/iron-engine.mp4",
     mediaAlt: "Iron engine",
-    locked: true,
+    versionLabel: "v0.1-beta",
   },
   {
     title: "Quest Index",
@@ -79,20 +81,20 @@ const projectCards: ProjectCard[] = [
 const patchNotes: PatchEntry[] = [
   {
     heading: "Patch Notes: PERKRUCIBLE",
-    subheading: "Release Date: March 21, 2026 | 03:34 AM",
+    subheading: "Release Date: April 6, 2026 | 10:03 PM",
     items: [
-      "Navigation Bar Refinement: Updated the global nav bar to a sleek solid black theme featuring a subtle metallic silver bottom border.",
-      "Access Buttons: Applied a soft glow effect to all primary access buttons to improve visual feedback and depth.",
-      'New "Add to Home Screen" (iOS): Integrated a dedicated shortcut guide for iOS users, providing step-by-step instructions to save the app to the mobile home screen.',
-      'New "Add to Desktop" (Win-x64): Added a downloadable Windows internet shortcut package for the live web app.',
-      'Dynamic Notification Ticker: Introduced a specialized "Live Patch Notes" module in the nav bar.',
-      "Features a dark red aesthetic with a high-contrast red glow.",
-      'Includes a horizontal "News Ticker" scroll for quick updates.',
-      "Expands into a full scrollable history window upon interaction.",
+      "Iron Engine Card Update: The Iron Engine card is now live on the homepage with its own MP4 media slot and version label.",
     ],
   },
   {
-    heading: "Patch Notes: Digital Closet v0.01 Beta",
+    heading: "Patch Notes: Iron engine v0.1-beta",
+    subheading: "Release Date: April 6, 2026 | 10:03 PM",
+    items: [
+      "Iron Engine Version 1 Added: The first live build of Iron Engine has now been added to the main PERKRUCIBLE page.",
+    ],
+  },
+  {
+    heading: "Patch Notes: Digital Closet v0.1-beta",
     subheading: "Release Date: March 21, 2026 | 03:34 AM",
     items: [
       "Toggle Logic Improvements: Streamlined the Hide, Filter, and Layer controls; these menus now toggle closed when the icon is clicked a second time, removing unnecessary navigation steps.",
@@ -105,11 +107,9 @@ const patchNotes: PatchEntry[] = [
 ];
 
 const patchTickerItems = [
-  "PERKRUCIBLE nav bar refinement live now",
-  "iOS add-to-home-screen guide added",
-  "Windows desktop shortcut download added",
-  "Digital Closet toggle logic improved",
-  "Import/export utility now available",
+  "Iron Engine v0.1-beta now live",
+  "Iron Engine card unlocked on homepage",
+  "Homepage patch notes updated April 6, 2026",
 ];
 
 const iosInstructions = [
@@ -135,8 +135,6 @@ function triggerWindowsShortcutDownload() {
   document.body.removeChild(anchor);
   window.URL.revokeObjectURL(url);
 }
-
-type MobileModal = "contact" | "ios" | "windows" | "patch" | null;
 
 export default function HomePage() {
   const [contactOpen, setContactOpen] = useState(false);
@@ -428,50 +426,79 @@ export default function HomePage() {
           </div>
 
           <div className="projects-grid">
-            {projectCards.map((card) => (
-              <div className="project-card" key={card.title}>
-                {card.locked && (
-                  <>
-                    <img src="/images/eye.png" alt="Eye Overlay" className="eye-overlay" />
-                    <div className="eye-notice">Content not yet available</div>
-                  </>
-                )}
+            {projectCards.map((card) => {
+              const isIronEngineCard = card.title === "Iron engine";
+              const ironEngineMediaStyle = isIronEngineCard
+                ? {
+                    transform: "translate3d(0px, 6px, 0) scale(1.04)",
+                    transformOrigin: "center center",
+                  }
+                : undefined;
 
-                <div className="project-image-frame">
-                  {card.imageType === "video" ? (
-                    <video
-                      className="project-video"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="auto"
-                      disablePictureInPicture
-                      controlsList="nodownload noplaybackrate noremoteplayback"
-                    >
-                      <source src={card.mediaSrc} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <img src={card.mediaSrc} alt={card.mediaAlt} className="project-image" />
+              return (
+                <div className="project-card" key={card.title}>
+                  {card.locked && (
+                    <>
+                      <img src="/images/eye.png" alt="Eye Overlay" className="eye-overlay" />
+                      <div className="eye-notice">Content not yet available</div>
+                    </>
                   )}
+
+                  <div className={`project-image-frame ${isIronEngineCard ? "iron-engine-frame" : ""}`}>
+                    {card.imageType === "video" ? (
+                      isIronEngineCard ? (
+                        <div className="iron-engine-media-stage">
+                          <div className="iron-engine-media-transform" style={ironEngineMediaStyle}>
+                            <video
+                              className="project-video iron-engine-media"
+                              autoPlay
+                              muted
+                              loop
+                              playsInline
+                              preload="auto"
+                              disablePictureInPicture
+                              controlsList="nodownload noplaybackrate noremoteplayback"
+                            >
+                              <source src={card.mediaSrc} type="video/mp4" />
+                            </video>
+                          </div>
+                        </div>
+                      ) : (
+                        <video
+                          className="project-video"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="auto"
+                          disablePictureInPicture
+                          controlsList="nodownload noplaybackrate noremoteplayback"
+                        >
+                          <source src={card.mediaSrc} type="video/mp4" />
+                        </video>
+                      )
+                    ) : (
+                      <img src={card.mediaSrc} alt={card.mediaAlt} className="project-image" />
+                    )}
+                  </div>
+
+                  <h2 className="project-title">{card.title}</h2>
+                  <p className="project-description">{card.description}</p>
+
+                  {card.versionLabel && <div className="project-version">{card.versionLabel}</div>}
+
+                  {(card.title === "Digital Closet" || card.title === "Iron engine") && (
+                    <button type="button" className="project-patch-link" onClick={openPatchNotes}>
+                      Patch Notes
+                    </button>
+                  )}
+
+                  <a href={card.href} className="project-button">
+                    Access WEBAPP ✧
+                  </a>
                 </div>
-
-                <h2 className="project-title">{card.title}</h2>
-                <p className="project-description">{card.description}</p>
-
-                {card.versionLabel && <div className="project-version">{card.versionLabel}</div>}
-
-                {card.title === "Digital Closet" && (
-                  <button type="button" className="project-patch-link" onClick={openPatchNotes}>
-                    Patch Notes
-                  </button>
-                )}
-
-                <a href={card.href} className="project-button">
-                  Access WEBAPP ✧
-                </a>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
