@@ -80,6 +80,18 @@
 .brand { color: #ededed; }
 .mobileLabel { display: none; }
 
+.desktopAds {
+  position: absolute;
+  top: 390px;
+  width: min(250px, calc((100vw - 1220px) / 2 - 28px));
+  display: grid;
+  gap: 48px;
+}
+.desktopAdsLeft { left: 14px; }
+.desktopAdsRight { right: 14px; }
+.desktopAds ins { min-height: 250px; }
+.mobileAds { display: none; }
+
 .page {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
@@ -255,7 +267,9 @@
 
 .sectionLink,
 .expandControl {
-  display: inline-block;
+  display: block;
+  clear: both;
+  width: clamp(154px, 20vw, 194px);
   margin-top: 19px;
   padding: 0 0 4px;
   border: 0;
@@ -267,6 +281,7 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   text-decoration: none;
+  text-align: center;
   cursor: pointer;
   transition: color 160ms ease, text-shadow 160ms ease, border-color 160ms ease;
 }
@@ -425,11 +440,18 @@
 .patchEntry p { margin: 0 0 8px; font-size: 13px; }
 .patchEntry ul { margin-bottom: 0; }
 
+@media (max-width: 1500px) {
+  .desktopAds { display: none; }
+}
+
 @media (max-width: 860px) {
+  .desktopAds { display: none; }
   .projectGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 620px) {
+  .mobileAds { display: block; width: 100%; margin-top: 28px; }
+  .mobileAds ins { min-height: 100px; }
   .nav { justify-content: stretch; padding: 0; }
   .navItem {
     flex: 1 1 0;
@@ -506,6 +528,7 @@
 
   .sectionLink,
   .expandControl {
+    width: 110px;
     margin-top: 14px;
     font-size: 10px;
   }

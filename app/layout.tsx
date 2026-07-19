@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "@neondatabase/auth-ui/css";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +20,9 @@ export const metadata: Metadata = {
   description: "The Digital Crucible",
 
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/images/milk-bottle-grid-v1.png",
+    shortcut: "/images/milk-bottle-grid-v1.png",
+    apple: "/images/milk-bottle-grid-v1.png",
   },
 
   openGraph: {
@@ -50,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body><Providers>{children}</Providers></body>
     </html>
   );
 }

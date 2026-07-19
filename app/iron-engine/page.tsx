@@ -2,6 +2,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import styles from "./iron.module.css";
 
 type TabKey = "settings" | "routines" | "tracker";
@@ -72,10 +73,34 @@ type AppState = {
 };
 
 const STORAGE_KEY = "iron-engine-state-v9";
+const IRON_DB = "perkrucible-iron-engine";
+const IRON_STORE = "state";
 const DEFAULT_DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function GearIcon() {
+  return <svg className={styles.uiIcon} viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.75v2.1M12 19.15v2.1M2.75 12h2.1M19.15 12h2.1M5.46 5.46l1.49 1.49M17.05 17.05l1.49 1.49M18.54 5.46l-1.49 1.49M6.95 17.05l-1.49 1.49"/><circle cx="12" cy="12" r="6.3"/><circle cx="12" cy="12" r="2.35"/></svg>;
+}
+
+function PinIcon() {
+  return <svg className={styles.uiIcon} viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l-1.3 6 3.3 3v2H6v-2l3.3-3L8 3Z"/><path d="M12 14v8"/></svg>;
+}
+
+async function saveToIndexedDb(value: AppState) {
+  await new Promise<void>((resolve, reject) => {
+    const request = indexedDB.open(IRON_DB, 1);
+    request.onupgradeneeded = () => request.result.createObjectStore(IRON_STORE);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const transaction = request.result.transaction(IRON_STORE, "readwrite");
+      transaction.objectStore(IRON_STORE).put(value, STORAGE_KEY);
+      transaction.oncomplete = () => { request.result.close(); resolve(); };
+      transaction.onerror = () => reject(transaction.error);
+    };
+  });
 }
 
 function buildDefaultDays(): DayItem[] {
@@ -305,6 +330,7 @@ export default function IronEnginePage() {
   const [trackers, setTrackers] = useState<TrackerItem[]>([]);
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("lbs");
   const [hydrated, setHydrated] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"Loading" | "Saving" | "Saved">("Loading");
   const [resettingProgramIds, setResettingProgramIds] = useState<string[]>([]);
   const [settingsMenu, setSettingsMenu] = useState<null | { type: "program" | "day" | "workout" | "tracker" | "task"; programId?: string; dayId?: string; workoutId?: string; trackerId?: string; taskId?: string; currentText?: string }>(null);
 
@@ -388,7 +414,12 @@ export default function IronEnginePage() {
       trackers,
       weightUnit,
     };
+    setSaveStatus("Saving");
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    const timer = window.setTimeout(() => {
+      saveToIndexedDb(payload).catch(() => undefined).finally(() => setSaveStatus("Saved"));
+    }, 180);
+    return () => window.clearTimeout(timer);
   }, [hydrated, tab, routinePrograms, pinnedProgramId, selectedProgramId, pinnedTrackerId, trackers, weightUnit]);
 
   const selectedProgram = useMemo(
@@ -962,8 +993,23 @@ export default function IronEnginePage() {
     <div className={styles.page}>
       <div className={styles.backdropGlow} />
 
+      <nav className={styles.topNav} aria-label="Iron Engine navigation">
+        <Link href="/" className={styles.brandLink}>Perkrucible</Link>
+        <span className={styles.saveStatus}>{saveStatus}</span>
+        <div>
+          <button type="button" onClick={exportData}>Export</button>
+          <button type="button" onClick={() => fileInputRef.current?.click()}>Import</button>
+        </div>
+      </nav>
+
       <div className={styles.shell}>
         <input ref={fileInputRef} type="file" accept="application/json" onChange={handleImportFile} className={styles.hiddenFileInput} />
+
+        <header className={styles.titleSanctum}>
+          <div className={styles.titleImageWrapTop}>
+            <img src="/images/iron-engine-title-v2.png" alt="Iron Engine" className={styles.titleImage} />
+          </div>
+        </header>
 
         <div className={styles.interfaceFrame}>
           <span className={`${styles.frameEdge} ${styles.frameEdgeTop}`} aria-hidden="true" />
@@ -975,28 +1021,7 @@ export default function IronEnginePage() {
           <span className={`${styles.frameCorner} ${styles.frameCornerBottomRight}`} aria-hidden="true" />
           <span className={`${styles.frameCorner} ${styles.frameCornerBottomLeft}`} aria-hidden="true" />
 
-          <header className={styles.titleSanctum}>
-            <div className={styles.titleImageWrapTop}>
-              <img
-                src="/images/iron-engine-title-v2.png"
-                alt="Iron Engine"
-                className={styles.titleImage}
-              />
-            </div>
-          </header>
-
           <div className={styles.interfaceScroll}>
-        <div className={styles.topUtilityRow}>
-          <button type="button" className={styles.utilityBox} onClick={exportData}>
-            <span className={styles.utilityIcon}>⇪</span>
-            <span>Export</span>
-          </button>
-          <button type="button" className={styles.utilityBox} onClick={() => fileInputRef.current?.click()}>
-            <span className={styles.utilityIcon}>⇩</span>
-            <span>Import</span>
-          </button>
-        </div>
-
         <header className={styles.heroCard}>
           <div className={styles.heroStats}>
             <div className={styles.statCard} title="Pinned routine">
@@ -1030,7 +1055,7 @@ export default function IronEnginePage() {
             aria-label="Settings"
             title="Settings"
           >
-            ⚙
+            <GearIcon />
           </button>
         </div>
 
@@ -1065,8 +1090,8 @@ export default function IronEnginePage() {
                 </div>
                 <div className={styles.iconToolbarUnderTitle}>
                   <button type="button" className={styles.iconOnlyButton} onClick={() => addDayToProgram(selectedProgram.id)} title="Add day">＋</button>
-                  <button type="button" className={styles.iconOnlyButton} onClick={() => setPinnedProgramId(selectedProgram.id)} title="Pin routine">⌖</button>
-                  <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "program", programId: selectedProgram.id })} title="Routine settings">⚙</button>
+                  <button type="button" className={styles.iconOnlyButton} onClick={() => setPinnedProgramId(selectedProgram.id)} title="Pin routine"><PinIcon /></button>
+                  <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "program", programId: selectedProgram.id })} title="Routine settings"><GearIcon /></button>
                 </div>
 
                 <div className={styles.stack}>
@@ -1086,7 +1111,7 @@ export default function IronEnginePage() {
                         {day.open ? (
                           <div className={styles.inlineHeaderIconsLeft}>
                             <button type="button" className={styles.iconOnlyButton} onClick={() => openAddWorkoutModal(day.id)} title="Add workout">＋</button>
-                            <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "day", programId: selectedProgram.id, dayId: day.id })} title="Day settings">⚙</button>
+                            <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "day", programId: selectedProgram.id, dayId: day.id })} title="Day settings"><GearIcon /></button>
                           </div>
                         ) : null}
                       </div>
@@ -1133,7 +1158,7 @@ export default function IronEnginePage() {
                                   </div>
 
                                   <div className={styles.inlineHeaderIcons}>
-                                    <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "workout", programId: selectedProgram.id, dayId: day.id, workoutId: workout.id })} title="Workout settings">⚙</button>
+                                    <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "workout", programId: selectedProgram.id, dayId: day.id, workoutId: workout.id })} title="Workout settings"><GearIcon /></button>
                                   </div>
                                 </div>
                               ))}
@@ -1173,12 +1198,12 @@ export default function IronEnginePage() {
                         {tracker.trackerKind === "checklist" ? (
                           <>
                             <button type="button" className={styles.iconOnlyButton} onClick={() => openChecklistPrompt(tracker.id)} title="Add task">＋</button>
-                            <button type="button" className={styles.iconOnlyButton} onClick={() => setPinnedTrackerId(tracker.id)} title="Pin checklist">⌖</button>
+                            <button type="button" className={styles.iconOnlyButton} onClick={() => setPinnedTrackerId(tracker.id)} title="Pin checklist"><PinIcon /></button>
                           </>
                         ) : (
                           <button type="button" className={styles.iconOnlyButton} onClick={() => openGraphDataModal(tracker.id)} title="Add data">＋</button>
                         )}
-                        <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "tracker", trackerId: tracker.id })} title="Tracker settings">⚙</button>
+                        <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "tracker", trackerId: tracker.id })} title="Tracker settings"><GearIcon /></button>
                       </div>
                     ) : null}
                   </div>
@@ -1204,7 +1229,7 @@ export default function IronEnginePage() {
                                   </div>
 
                                   <div className={styles.inlineHeaderIcons}>
-                                    <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "task", trackerId: tracker.id, taskId: task.id, currentText: task.text })} title="Task settings">⚙</button>
+                                    <button type="button" className={styles.iconOnlyButton} onClick={() => setSettingsMenu({ type: "task", trackerId: tracker.id, taskId: task.id, currentText: task.text })} title="Task settings"><GearIcon /></button>
                                   </div>
                                 </div>
                               ))

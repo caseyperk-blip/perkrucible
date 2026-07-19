@@ -1,0 +1,361 @@
+.app {
+  --silver: #d8dcdf;
+  --silver-dim: #8f969b;
+  --paper: #bcb7aa;
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  padding-bottom: 72px;
+  color: #e1e1df;
+  background: #030303;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.78)),
+    url("/images/quest-index-background-v1.png") center top / cover no-repeat;
+  filter: grayscale(1);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  min-height: 43px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(228, 232, 235, 0.28);
+  background: rgba(2, 2, 2, 0.96);
+  box-shadow: 0 8px 28px #000;
+}
+
+.topbar a,
+.topbar button {
+  color: #c8ccce;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.topbar > div { justify-self: end; display: flex; }
+.topbar button { min-height: 42px; padding: 0 13px; border: 0; background: none; cursor: pointer; }
+.topbar button:hover,
+.topbar a:hover { color: #fff; text-shadow: 0 0 10px #fff; }
+.saveStatus { color: #8f9598; font-size: 0; letter-spacing: 0.12em; text-transform: uppercase; }
+.saveStatus::after { content: "Quest Index"; color: #aeb3b5; font-size: 9px; }
+
+.titleArea {
+  width: min(1140px, calc(100% - 28px));
+  height: 250px;
+  margin: 12px auto 38px;
+  display: grid;
+  place-items: center;
+}
+
+.titleArea img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 14px 22px #000); }
+
+.ledger {
+  position: relative;
+  width: min(1180px, calc(100% - 34px));
+  min-height: 690px;
+  margin: 0 auto;
+  padding: 78px clamp(58px, 6vw, 78px) 86px;
+  border-left: 5px double rgba(190, 195, 198, 0.6);
+  border-right: 5px double rgba(190, 195, 198, 0.6);
+  background:
+    linear-gradient(rgba(2, 2, 2, 0.89), rgba(4, 4, 4, 0.94)),
+    url("/images/quest-parchment-texture-v1.png") center / 640px repeat;
+  box-shadow: 0 35px 100px #000, inset 0 0 90px #000;
+}
+
+.frameCorner,
+.frameEdge { position: absolute; pointer-events: none; }
+.frameCorner { z-index: 7; width: 112px; aspect-ratio: 1; background: url("/images/iron-frame-outer-corner-v3.png") left top / contain no-repeat; }
+.topLeft { left: 0; top: 0; }
+.topRight { right: 0; top: 0; transform: scaleX(-1); }
+.bottomLeft { left: 0; bottom: 0; transform: scaleY(-1); }
+.bottomRight { right: 0; bottom: 0; transform: scale(-1); }
+.frameEdge { z-index: 5; background: url("/images/iron-frame-outer-edge-v3.png") center / auto 100% repeat-x; }
+.edgeTop,
+.edgeBottom { left: 62px; right: 62px; height: 42px; }
+.edgeTop { top: 0; }
+.edgeBottom { bottom: 0; transform: rotate(180deg); }
+.edgeLeft,
+.edgeRight { display: block; top: 62px; bottom: 62px; width: 20px; background: linear-gradient(90deg,#111,#747474 16%,#161616 28%,#050505 62%,#4a4a4a 86%,#111); border-inline: 1px solid #727272; box-shadow: 0 0 10px #000; }
+.edgeLeft { left: 0; }
+.edgeRight { right: 0; transform: scaleX(-1); }
+
+.tabBar {
+  position: relative;
+  z-index: 7;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 3px;
+  margin: -15px auto 34px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.17);
+}
+
+.tabBar button {
+  min-height: 50px;
+  padding: 0 clamp(13px, 3vw, 32px);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #85898b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(14px, 1.8vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.065em;
+  cursor: pointer;
+}
+.tabBar button:hover,
+.tabBar .activeTab { color: #fff; border-bottom-color: #e9ecee; text-shadow: 0 0 12px rgba(255, 255, 255, 0.65); }
+
+.toolbar {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 30px;
+  padding: 12px;
+  border: 1px solid rgba(217, 220, 222, 0.2);
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.toolbar input { flex: 1 1 210px; }
+.toolbar button,
+.toolbar input,
+.toolbar select,
+.categoryCreator input,
+.categoryCreator button,
+.holidaySettings input,
+.holidaySettings select {
+  min-height: 38px;
+  border: 1px solid rgba(212, 216, 218, 0.25);
+  background: #080808;
+  color: #cfd1d2;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+button.primaryAction,
+.toolbar .primaryAction { color: #fff; border-color: rgba(239, 242, 244, 0.55); box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05); cursor: pointer; }
+.toolbar button { cursor: pointer; }
+.toolbar .activeControl { color: #fff; box-shadow: 0 0 13px rgba(255,255,255,.12), inset 0 0 12px rgba(255,255,255,.06); }
+
+.viewPanel { position: relative; }
+.viewHeading { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+.viewHeading h1,
+.calendarHeader h1 { margin: 4px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(28px, 4vw, 45px); letter-spacing: 0.035em; }
+.viewHeading > span { color: #85898c; font-size: 10px; letter-spacing: .13em; text-transform: uppercase; }
+.eyebrow { color: #8d9498; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; }
+.divider { display: block; width: 100%; height: 54px; margin: 4px 0 14px; object-fit: contain; }
+.questList { display: grid; gap: 10px; }
+
+.questCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 15px;
+  align-items: start;
+  min-height: 0;
+  height: auto;
+  align-content: start;
+  grid-auto-rows: max-content;
+  padding: 13px 15px;
+  border: 1px solid rgba(214, 208, 190, 0.23);
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.18), rgba(255,255,255,.015), rgba(0,0,0,.2)),
+    url("/images/quest-parchment-texture-v1.png") center / 540px repeat;
+  box-shadow: inset 0 0 24px rgba(0,0,0,.48), 0 7px 17px rgba(0,0,0,.32);
+}
+.questCard[draggable="true"] { cursor: grab; }
+.questCard:active { cursor: grabbing; }
+.filterRail { min-height: 13px; display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px; }
+.filterDot,
+.filterChoices i,
+.colorChoices button { --dot-color: #ddd; width: 15px; height: 15px; flex: 0 0 auto; padding: 0; border: 2px solid #fff; border-radius: 50%; background: var(--dot-color); box-shadow: 0 0 12px color-mix(in srgb, var(--dot-color), white 30%); }
+.filterDot { cursor: help; }
+.completionMark { width: 25px; height: 25px; margin-top: 2px; border: 1px solid #aaa; background: rgba(0,0,0,.34); color: #fff; cursor: pointer; }
+.questCopy h3 { margin: 0; color: #f1f0eb; font-family: Georgia, "Times New Roman", serif; font-size: 19px; letter-spacing: .035em; }
+.questCopy p { margin: 7px 0 0; color: #b7b4aa; font-family: Georgia, "Times New Roman", serif; font-size: 13px; line-height: 1.48; }
+.questHeading { display: flex; justify-content: space-between; gap: 15px; padding-right: 175px; }
+.questHeading span { color: #777b7e; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.questMeta { display: flex; gap: 14px; margin-top: 10px; color: #878984; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+.questActions { position: absolute; top: 10px; right: 12px; display: flex; align-items: flex-start; justify-content: flex-end; gap: 8px; margin: 0; }
+.questActions .filterRail { min-width: 18px; }
+.actionButtons { display: flex; align-items: center; gap: 7px; }
+.questActions button,
+.categoryBlock header button,
+.emptyState button,
+.calendarHeader button,
+.dayExpansion button,
+.questModal button { border: 0; background: transparent; color: #aeb1b2; font: inherit; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.questActions button:hover,
+.categoryBlock header button:hover,
+.emptyState button:hover,
+.dayExpansion button:hover { color: #fff; text-shadow: 0 0 9px #fff; }
+.reorderControls { display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,.15); padding-right: 6px; }
+.reorderControls button { font-size: 13px; line-height: 15px; }
+.completedQuest { opacity: .66; }
+.completedQuest h3 { text-decoration: line-through; }
+.completingQuest { animation: questComplete 620ms ease forwards; }
+.completingQuest h3,
+.completingQuest p { animation: questStrike 620ms ease forwards; }
+.completingQuest .completionMark { animation: completionPulse 620ms ease; }
+
+.emptyState { min-height: 330px; display: flex; align-items: center; justify-content: center; gap: 35px; text-align: left; }
+.emptyState img { width: min(240px, 40%); height: 320px; object-fit: contain; }
+.emptyState h2 { margin: 0 0 8px; font-family: Georgia, serif; }
+.emptyState p { margin: 0 0 18px; color: #999; font-family: Georgia, serif; }
+.emptyState button { padding-bottom: 3px; border-bottom: 1px solid #777; }
+
+.categoryCreator { display: flex; justify-content: flex-end; gap: 8px; margin: 28px 0 18px; }
+.categoryCreator button { min-height: 38px; padding: 0 16px; }
+.categoryBlock { border-top: 1px solid rgba(255,255,255,.17); padding: 12px 0 22px; }
+.categoryBlock > header { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 52px; }
+.categoryToggle { display: flex; align-items: center; gap: 14px; color: #e5e5e1 !important; }
+.categoryToggle span { font-size: 17px; width: 15px; }
+.categoryToggle strong { font-family: Georgia, serif; font-size: 21px; letter-spacing: .04em; text-transform: none; }
+.categoryToggle small { min-width: 25px; padding: 3px; border: 1px solid #424242; color: #83878a; }
+.categoryBlock > header > div { display: flex; gap: 8px; }
+.categoryEmpty { margin: 16px 0 10px; color: #777; font-family: Georgia, serif; font-style: italic; text-align: center; }
+
+.calendarHeader { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; text-align: center; }
+.calendarHeader button:first-child { justify-self: start; }
+.calendarHeader button:last-child { justify-self: end; }
+.holidaySettings { margin: 24px 0 15px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.42); }
+.holidaySettings summary { padding: 12px; color: #a9adaf; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.holidaySettings > div { display: flex; flex-wrap: wrap; gap: 12px; padding: 0 12px 13px; }
+.holidaySettings label { display: flex; align-items: center; gap: 7px; color: #8f9395; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.holidaySettings .typeToggle input { min-height: auto; }
+.calendarGrid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); border-left: 1px solid rgba(255,255,255,.15); border-top: 1px solid rgba(255,255,255,.15); }
+.weekday { padding: 9px; border-right: 1px solid rgba(255,255,255,.15); border-bottom: 1px solid rgba(255,255,255,.15); color: #8e9294; font-size: 9px; letter-spacing: .12em; text-align: center; text-transform: uppercase; }
+.dayCell { position: relative; min-height: 105px; padding: 9px; overflow: hidden; border: 0; border-right: 1px solid rgba(255,255,255,.15); border-bottom: 1px solid rgba(255,255,255,.15); background: rgba(9,9,9,.76); color: #cfd1d0; text-align: left; cursor: pointer; }
+.dayCell:hover,
+.selectedDay { background: rgba(255,255,255,.06); box-shadow: inset 0 0 18px rgba(255,255,255,.07); }
+.outsideMonth { opacity: .35; }
+.dayNumber { position: absolute; top: 8px; left: 8px; font-family: Georgia, serif; font-size: 15px; line-height: 1; }
+.holidayName { display: block; margin-top: 10px; overflow: hidden; color: #9fa29e; font-family: Georgia, serif; font-size: 9px; line-height: 1.2; }
+.dayMarkers { position: absolute; left: 8px; bottom: 9px; display: flex; gap: 3px; }
+.dayMarkers i { width: 5px; height: 5px; border-radius: 50%; background: #d7d7d7; box-shadow: 0 0 5px #fff; }
+.dayCell b { position: absolute; right: 8px; bottom: 7px; font-size: 9px; }
+.dayExpansion { position:fixed; z-index:4000; top:50%; left:50%; width:min(900px,calc(100vw - 40px)); max-height:min(78vh,760px); margin:0; padding:22px; overflow-y:auto; overscroll-behavior:contain; transform:translate(-50%,-50%); border:1px solid rgba(230,226,212,.3); background:#050505 url("/images/quest-parchment-texture-v1.png") center / 620px repeat; box-shadow:0 0 0 100vmax rgba(0,0,0,.86),inset 0 0 40px rgba(0,0,0,.56),0 24px 80px #000; }
+.dayExpansion > header { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 17px; }
+.dayExpansion h2 { margin: 4px 0; font-family: Georgia, serif; }
+.dayExpansion header p { display: inline-block; margin: 3px 8px 0 0; color: #9f9c92; font-size: 10px; }
+.dayExpansion header > div:last-child { display: flex; gap: 8px; }
+
+.modalBackdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.84); }
+.questModal { width: min(680px, 100%); max-height: 88vh; overflow-y: auto; padding: 30px; border: 2px solid #777b7e; background: linear-gradient(rgba(7,7,7,.94),rgba(5,5,5,.97)), url("/images/quest-parchment-texture-v1.png") center / 600px; box-shadow: 0 30px 100px #000, inset 0 0 50px #000; }
+.questModal > header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 24px; }
+.questModal h2 { margin: 4px 0 0; font-family: Georgia, serif; font-size: 30px; }
+.questModal > label,
+.formRow label { display: grid; gap: 7px; margin-bottom: 16px; color: #999da0; font-size: 9px; letter-spacing: .13em; text-transform: uppercase; }
+.questModal input,
+.questModal textarea,
+.questModal select { width: 100%; border: 1px solid #414446; background: #080808; color: #e1e1df; padding: 11px; font: inherit; }
+.questModal textarea { resize: vertical; }
+.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.filterFieldset { margin: 3px 0 22px; padding: 16px; border: 1px solid #343638; }
+.filterFieldset legend { padding: 0 8px; color: #999da0; font-size: 9px; letter-spacing: .13em; text-transform: uppercase; }
+.filterChoices { display: flex; flex-wrap: wrap; gap: 8px; }
+.filterChoices label { display: flex; align-items: center; gap: 7px; padding: 7px 9px; border: 1px solid #333; color: #bbb; font-size: 10px; }
+.filterChoices input { width: auto; }
+.newFilterRow { display: grid; grid-template-columns: minmax(150px,1fr) auto auto; align-items: center; gap: 10px; margin-top: 14px; }
+.colorChoices { display: flex; gap: 5px; }
+.colorChoices button { width: 17px; height: 17px; }
+.colorChoices .selectedColor { outline: 2px solid #fff; outline-offset: 2px; }
+.questModal footer { display: flex; justify-content: flex-end; gap: 10px; }
+.questModal footer button { min-height: 40px; padding: 0 16px; border: 1px solid #3e4143; }
+.questModal footer button:disabled { opacity: .35; cursor: default; }
+.sectionModal { width: min(470px, 100%); }
+.filterModal { width: min(650px, 100%); }
+.managedFilters { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 22px; }
+.managedFilters span { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #4d504e; padding: 7px 10px; color: #d0d1cc; font: 12px Georgia, serif; }
+.managedFilters span button { margin-left: 5px; padding-left: 9px; border-left: 1px solid #3f4240; color: #858a87; }
+.managedFilters span button:hover { color: #fff; }
+.managedFilters i { width: 12px; height: 12px; border: 1px solid #fff; border-radius: 50%; background: var(--dot-color); box-shadow: 0 0 9px color-mix(in srgb, var(--dot-color), transparent 25%); }
+.noFilters { margin: 4px 0 22px; color: #969993; font: 13px Georgia, serif; }
+.filterLegend { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.filterLegend button { display: inline-flex; align-items: center; gap: 7px; min-height: 29px; padding: 4px 9px; border: 1px solid #4b4d4c; background: #080908; color: #bfc0bc; font: 11px Georgia, serif; }
+.filterLegend button:hover, .filterLegend .selectedFilter { color: #fff; border-color: #969a98; text-shadow: 0 0 7px #fff; }
+.filterLegend i { width: 11px; height: 11px; flex: 0 0 auto; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; background: var(--dot-color); box-shadow: 0 0 8px color-mix(in srgb, var(--dot-color), transparent 30%); }
+
+@keyframes questComplete {
+  0% { transform: translateX(0); opacity: 1; }
+  45% { transform: translateX(3px); opacity: 1; box-shadow: 0 0 24px rgba(255,255,255,.12); }
+  100% { transform: translateX(22px); opacity: 0; }
+}
+@keyframes questStrike {
+  0%, 30% { text-decoration-color: transparent; }
+  45%, 100% { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #eee; color: #888; }
+}
+@keyframes completionPulse {
+  45% { border-color: #fff; box-shadow: 0 0 18px rgba(255,255,255,.7); }
+}
+
+@media (max-width: 850px) {
+  .app { padding-bottom: 18px; }
+  .topbar { grid-template-columns: auto 1fr auto; padding-inline: 10px; }
+  .saveStatus { justify-self: center; font-size: 0; }
+  .saveStatus::after { content: "Quest Index"; font-size: 9px; color: #aeb3b5; }
+  .topbar button { padding-inline: 8px; font-size: 8px; }
+  .titleArea { width: calc(100% - 16px); height: 158px; margin: 7px auto; }
+  .ledger { width: calc(100% - 8px); padding: 56px 30px 68px; }
+  .frameCorner { width: 76px; }
+  .edgeTop,
+  .edgeBottom { left: 43px; right: 43px; height: 29px; }
+  .edgeLeft,
+  .edgeRight { top: 43px; bottom: 43px; width: 14px; }
+  .tabBar { margin-top: -11px; margin-bottom: 22px; }
+  .tabBar::before,
+  .tabBar::after { display: none; }
+  .tabBar button { flex: 1; min-width: 0; min-height: 44px; padding: 0 5px; font-size: 12px; }
+  .toolbar { padding: 8px; }
+  .toolbar > * { flex: 1 1 calc(50% - 8px); min-width: 0; }
+  .toolbar input { flex-basis: 100%; }
+  .divider { height: 38px; }
+  .questCard { grid-template-columns: 22px minmax(0,1fr); min-height: 0 !important; height: auto !important; padding: 9px 10px; column-gap: 8px; row-gap: 0; align-content: start; grid-auto-rows: max-content; }
+  .completionMark { width: 22px; height: 22px; margin-top: 0; }
+  .questCopy h3 { font-size: 16px; }
+  .questCopy p { margin-top: 4px; font-size: 12px; line-height: 1.35; }
+  .questHeading { display: block; padding-right: 135px; }
+  .questHeading span { display: block; margin-top: 5px; }
+  .questActions { top: 7px; right: 8px; justify-content: flex-end; margin: 0; gap: 5px; }
+  .actionButtons { gap: 4px; }
+  .questActions button { font-size: 8px; letter-spacing: .06em; }
+  .reorderControls { flex-direction: row; gap: 2px; padding-right: 4px; }
+  .questMeta { flex-direction: column; gap: 2px; margin-top: 5px; }
+  .emptyState { min-height: 280px; gap: 8px; }
+  .emptyState img { width: 46%; height: 260px; }
+  .categoryBlock > header { align-items: flex-start; }
+  .categoryToggle strong { font-size: 17px; }
+  .calendarHeader h1 { font-size: 24px; }
+  .calendarHeader button { font-size: 8px; }
+  .dayCell { min-height: 67px; padding: 5px; }
+  .holidayName { display: none; }
+  .dayNumber { font-size: 12px; }
+  .weekday { padding: 6px 2px; font-size: 8px; }
+  .dayExpansion { position:fixed; z-index:4000; inset:0; width:auto; max-height:none; margin:0; padding:24px 14px; overflow-y:auto; overscroll-behavior:contain; transform:none; background-color:#050505; box-shadow:inset 0 0 35px #000; }
+  .dayExpansion > header { align-items: flex-start; }
+  .dayExpansion h2 { font-size: 19px; }
+  .formRow { grid-template-columns: 1fr; gap: 0; }
+  .newFilterRow { grid-template-columns: 1fr; }
+  .colorChoices { flex-wrap: wrap; }
+  .questModal { padding: 23px 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app *, .app *::before, .app *::after { scroll-behavior: auto !important; transition: none !important; }
+}

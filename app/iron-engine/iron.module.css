@@ -241,6 +241,131 @@
   .modalActions button { flex: 1 1 auto; }
 }
 
+/* Final shared app chrome overrides */
+.topNav {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  width: 100%;
+  min-height: 43px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(228,232,235,.28);
+  background: rgba(2,2,2,.96);
+  box-shadow: 0 8px 28px #000;
+}
+.topNav > div { justify-self: end; display: flex; }
+.topNav button, .brandLink { min-height: 42px; padding: 0 13px; border: 0; background: none; color: #c8ccce; font: 10px/1 Arial, sans-serif; letter-spacing: .13em; text-transform: uppercase; }
+.topNav button { border-left: 0; }
+.saveStatus { color: #8f9598; font: 0/1 Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+.saveStatus::after { content: "Iron Engine"; color: #aeb3b5; font-size: 9px; }
+.titleSanctum { height: 250px; margin: 12px 0 10px; overflow: visible; }
+.titleImageWrapTop { display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 8px; }
+.titleImage { width: min(1050px, 100%); max-height: 245px; object-fit: contain; }
+.interfaceFrame { height: calc(100dvh - 325px); }
+.interfaceScroll { height: 100%; }
+.page { background: #020302 url("/images/iron-engine-background-v1.png") center top / cover fixed no-repeat; }
+
+@media (max-width: 700px) {
+  .topNav { min-height: 43px; padding: 0 8px; }
+  .topNav button, .brandLink { min-height: 42px; padding: 0 7px; font-size: 9px; }
+  .saveStatus { font-size: 0; }
+  .saveStatus::after { content: "Iron Engine"; font-size: 9px; color: #aeb3b5; }
+  .titleSanctum { height: 158px; margin: 7px 0; }
+  .titleImage { width: 100%; max-height: 156px; }
+  .interfaceFrame { height: calc(100dvh - 215px); }
+  .interfaceScroll { height: 100%; }
+}
+
+/* Unified application chrome */
+.page {
+  min-height: 100dvh;
+  padding: 0 12px 28px;
+  background: #020302 url("/images/iron-engine-background-v1.png") center top / cover fixed no-repeat;
+}
+.backdropGlow { position: fixed; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.15), rgba(0,0,0,.72) 28%, rgba(0,0,0,.72) 72%, rgba(0,0,0,.15)); pointer-events: none; }
+.topNav { position: relative; z-index: 60; width: min(1100px, 100%); min-height: 42px; margin: 0 auto; display: flex; align-items: center; justify-content: flex-end; gap: 7px; border-bottom: 1px solid #555; background: rgba(3,3,3,.94); padding: 5px 10px; }
+.topNav button, .brandLink { color: #d5d5d5; border: 0; background: transparent; padding: 7px 9px; font: 700 11px/1 Georgia, serif; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; }
+.topNav button:hover, .brandLink:hover { color: #fff; text-shadow: 0 0 8px #fff; }
+.brandLink { margin-right: auto; }
+.saveStatus { color: #8f948f; font: 10px/1.1 Georgia, serif; letter-spacing: .1em; text-transform: uppercase; }
+.shell { position: relative; z-index: 2; }
+.titleSanctum { height: 220px; margin: 8px 0 10px; overflow: visible; }
+.titleImageWrapTop { display: flex; align-items: center; justify-content: center; padding: 0 14px; }
+.titleImage { width: min(960px, 98%); max-height: 215px; object-fit: contain; }
+.interfaceFrame { height: calc(100dvh - 300px); min-height: 570px; padding: 54px 48px 48px; }
+.interfaceScroll { height: 100%; padding: 5px 30px 30px; }
+.uiIcon { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; display: block; }
+.uiIcon path:first-child { fill: rgba(180,180,180,.08); }
+
+@media (max-width: 700px) {
+  .page { padding: 0; overflow-x: hidden; overflow-y: auto; background-position: center top; }
+  .topNav { min-height: 39px; position: sticky; top: 0; }
+  .topNav button, .brandLink { padding: 6px 5px; font-size: 9px; }
+  .saveStatus { font-size: 8px; }
+  .titleSanctum { height: 132px; margin: 5px 0 7px; }
+  .titleImageWrapTop { padding: 0 6px; }
+  .titleImage { width: 98%; max-height: 130px; }
+  .interfaceFrame { width: 100vw; height: calc(100dvh - 183px); min-height: 510px; padding: 38px 20px 32px; }
+  .interfaceScroll { height: 100%; padding: 2px 5px 25px; }
+}
+
+@media (max-width: 700px) {
+  .saveStatus { font-size: 0; }
+  .saveStatus::after { content: "Iron Engine"; font-size: 9px; color: #aeb3b5; }
+}
+
+/* Final expanding-frame overrides. */
+.interfaceFrame { height:auto; min-height:calc(100dvh - 325px); padding:72px 48px 80px; overflow:visible; }
+.interfaceScroll { height:auto; overflow:visible; padding:5px 30px 30px; }
+.frameEdge { z-index:40; }
+.frameCorner { z-index:50; width:112px; height:112px; }
+.frameCornerTopRight { transform:scaleX(-1); }
+.frameCornerBottomRight { transform:scale(-1); }
+.frameCornerBottomLeft { transform:scaleY(-1); }
+.frameEdgeTop,.frameEdgeBottom { left:62px; right:62px; height:42px; background-size:auto 42px; }
+.frameEdgeLeft,.frameEdgeRight { top:62px; bottom:62px; width:20px; }
+
+@media (max-width:700px) {
+  .page { overflow-x:hidden; overflow-y:auto; }
+  .interfaceFrame { height:auto; min-height:calc(100dvh - 215px); padding:52px 28px 60px; }
+  .interfaceScroll { height:auto; overflow:visible; padding:2px 5px 18px; }
+  .frameCorner { width:76px; height:76px; }
+  .frameEdgeTop,.frameEdgeBottom { left:43px; right:43px; height:29px; background-size:auto 29px; }
+  .frameEdgeLeft,.frameEdgeRight { top:43px; bottom:43px; width:14px; }
+}
+
+.topNav button { border: 0; }
+.saveStatus { font-size: 0; }
+.saveStatus::after { content: "Iron Engine"; font-size: 9px; color: #aeb3b5; }
+
+/* Expanding outer frame: identical mirrored corners, rails underneath, and no inner scroll cage. */
+.interfaceFrame { height: auto; min-height: calc(100dvh - 325px); padding: 72px 48px 80px; overflow: visible; }
+.interfaceScroll { height: auto; overflow: visible; padding: 5px 30px 30px; }
+.frameEdge { z-index: 40; }
+.frameCorner { z-index: 50; width: 112px; height: 112px; }
+.frameCornerTopRight { transform: scaleX(-1); }
+.frameCornerBottomRight { transform: scale(-1); }
+.frameCornerBottomLeft { transform: scaleY(-1); }
+.frameEdgeTop,.frameEdgeBottom { left: 62px; right: 62px; height: 42px; background-size:auto 42px; }
+.frameEdgeLeft,.frameEdgeRight { top:62px; bottom:62px; width:20px; }
+
+@media (max-width:700px) {
+  .page { overflow-x:hidden; overflow-y:auto; }
+  .interfaceFrame { height:auto; min-height:calc(100dvh - 215px); padding:52px 28px 60px; }
+  .interfaceScroll { height:auto; overflow:visible; padding:2px 5px 18px; }
+  .frameCorner { width:76px; height:76px; }
+  .frameEdgeTop,.frameEdgeBottom { left:43px; right:43px; height:29px; background-size:auto 29px; }
+  .frameEdgeLeft,.frameEdgeRight { top:43px; bottom:43px; width:14px; }
+}
+
+/* Definitive shared navigation treatment. */
+.topNav button { border: 0; }
+.saveStatus { font-size: 0; }
+.saveStatus::after { content: "Iron Engine"; font-size: 9px; color: #aeb3b5; }
+
 @media (prefers-reduced-motion: reduce) {
   .page *, .page *::before, .page *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
@@ -266,22 +391,22 @@
 .frameCorner { position: absolute; z-index: 50; display: block; pointer-events: none; }
 .frameEdgeTop,
 .frameEdgeBottom {
-  left: 74px;
-  right: 74px;
-  height: 47px;
+  left: 62px;
+  right: 62px;
+  height: 42px;
   background-image: url("/images/iron-frame-outer-edge-v3.png");
   background-repeat: repeat-x;
   background-position: center;
-  background-size: auto 47px;
+  background-size: auto 42px;
   filter: drop-shadow(0 4px 6px #000);
 }
 .frameEdgeTop { top: 0; }
 .frameEdgeBottom { bottom: 0; transform: rotate(180deg); }
 .frameEdgeLeft,
 .frameEdgeRight {
-  top: 70px;
-  bottom: 70px;
-  width: 25px;
+  top: 62px;
+  bottom: 62px;
+  width: 20px;
   border-inline: 1px solid #727272;
   background: linear-gradient(90deg, #111, #747474 16%, #161616 28%, #050505 62%, #4a4a4a 86%, #111);
   box-shadow: 0 0 10px #000;
@@ -290,15 +415,15 @@
 .frameEdgeRight { right: 0; transform: scaleX(-1); }
 
 .frameCorner {
-  width: 128px;
-  height: 128px;
+  width: 112px;
+  height: 112px;
   background: url("/images/iron-frame-outer-corner-v3.png") top left / contain no-repeat;
   filter: drop-shadow(0 7px 8px #000);
 }
 .frameCornerTopLeft { top: 0; left: 0; }
-.frameCornerTopRight { top: 0; right: 0; transform: rotate(90deg); }
-.frameCornerBottomRight { right: 0; bottom: 0; transform: rotate(180deg); }
-.frameCornerBottomLeft { left: 0; bottom: 0; transform: rotate(270deg); }
+.frameCornerTopRight { top: 0; right: 0; transform: scaleX(-1); }
+.frameCornerBottomRight { right: 0; bottom: 0; transform: scale(-1); }
+.frameCornerBottomLeft { left: 0; bottom: 0; transform: scaleY(-1); }
 
 .titleSanctum {
   position: relative;
@@ -378,13 +503,13 @@
     padding: 38px 20px 32px;
   }
   .frameEdgeTop, .frameEdgeBottom {
-    left: 52px;
-    right: 52px;
-    height: 33px;
-    background-size: auto 33px;
+    left: 43px;
+    right: 43px;
+    height: 29px;
+    background-size: auto 29px;
   }
-  .frameEdgeLeft, .frameEdgeRight { top: 51px; bottom: 51px; width: 18px; }
-  .frameCorner { width: 86px; height: 86px; }
+  .frameEdgeLeft, .frameEdgeRight { top: 43px; bottom: 43px; width: 14px; }
+  .frameCorner { width: 76px; height: 76px; }
   .titleSanctum { height: 152px; }
   .titleImageWrapTop { padding: 7px 12px 2px; }
   .titleImage { width: min(350px, 92%); max-height: 124px; }
@@ -394,4 +519,33 @@
     width: 29px;
     height: 29px;
   }
+}
+
+/* Keep shared chrome last so earlier legacy rules cannot override it. */
+.topNav { position: sticky; top: 0; z-index: 80; width: 100%; min-height: 43px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 18px; border-bottom: 1px solid rgba(228,232,235,.28); background: rgba(2,2,2,.96); box-shadow: 0 8px 28px #000; }
+.topNav > div { justify-self: end; display: flex; }
+.topNav button, .brandLink { min-height: 42px; padding: 0 13px; border: 0; background: none; color: #c8ccce; font: 10px/1 Arial, sans-serif; letter-spacing: .13em; text-transform: uppercase; }
+.topNav button { border: 0; }
+.saveStatus { color: #8f9598; font: 0/1 Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+.saveStatus::after { content: "Iron Engine"; font-size: 9px; color: #aeb3b5; }
+.titleSanctum { height: 250px; margin: 12px 0 10px; overflow: visible; }
+.titleImageWrapTop { display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 8px; }
+.titleImage { width: min(1050px, 100%); max-height: 245px; object-fit: contain; }
+.interfaceFrame { height:auto; min-height:calc(100dvh - 325px); padding:72px 48px 80px; overflow:visible; }
+.interfaceScroll { height:auto; overflow:visible; padding:5px 30px 30px; }
+
+@media (max-width: 700px) {
+  .topNav { min-height: 43px; padding: 0 8px; }
+  .topNav button, .brandLink { min-height: 42px; padding: 0 7px; font-size: 9px; }
+  .saveStatus { font-size: 8px; }
+  .titleSanctum { height: 158px; margin: 7px 0; }
+  .titleImageWrapTop { padding: 0 3px; }
+  .titleImage { width: 100%; max-height: 156px; }
+  .interfaceFrame { height:auto; min-height:calc(100dvh - 215px); padding:52px 28px 60px; }
+  .interfaceScroll { height:auto; overflow:visible; padding:2px 5px 18px; }
+}
+
+@media (max-width: 700px) {
+  .saveStatus { font-size: 0; }
+  .saveStatus::after { content: "Iron Engine"; font-size: 9px; color: #aeb3b5; }
 }

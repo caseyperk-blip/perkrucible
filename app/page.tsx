@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import styles from "./page.module.css";
+import { AdSlot } from "./components/AdSlot";
 
 type Modal = "ios" | "patch" | null;
 
@@ -32,11 +33,11 @@ const projects: ProjectCard[] = [
     version: "v0.2-beta",
   },
   {
-    title: "Digital Pantry",
-    description: "Organize. Track. Filter. Cook. Expire.",
-    href: "/pantry",
-    image: "/images/digital-pantry.png",
-    locked: true,
+    title: "Quest Index",
+    description: "Organize. Filter. Schedule. Execute.",
+    href: "/quest-index",
+    image: "/images/quest-index-cover-v3.png",
+    version: "v0.1-beta",
   },
   {
     title: "Digital Inventory",
@@ -46,10 +47,10 @@ const projects: ProjectCard[] = [
     locked: true,
   },
   {
-    title: "Quest Index",
-    description: "Organize. Filter. Schedule. Execute.",
-    href: "/quest-index",
-    image: "/images/quest-index.png",
+    title: "Digital Pantry",
+    description: "Organize. Track. Filter. Cook. Expire.",
+    href: "/pantry",
+    image: "/images/digital-pantry.png",
     locked: true,
   },
 ];
@@ -69,7 +70,7 @@ const sections = [
     image: "/images/redacted-files-v2.png",
     alt: "A blackened metal gauntlet holding redacted documents",
     description:
-      "An expanding archive of disconnected, recovered entries. Some are observations, some are records, and some are uncertain recollections. Context has not been provided and should not be expected.",
+      "An archive of recovered observations, records, and uncertain recollections. Context has not been provided and should not be expected.",
   },
   {
     title: "CLONE HERO",
@@ -117,7 +118,7 @@ const patchTickerText =
   "PERKRUCIBLE homepage archive rebuilt   —   Iron Engine v0.2-beta now live   —   Digital Closet v0.1-beta available   —   New files are being prepared";
 
 function downloadWindowsShortcut() {
-  const contents = `[InternetShortcut]\nURL=https://perkrucible.com/\nIconFile=https://perkrucible.com/favicon-32x32.png\nIconIndex=0\n`;
+  const contents = `[InternetShortcut]\nURL=https://perkrucible.com/\nIconFile=https://perkrucible.com/images/milk-bottle-grid-v1.png\nIconIndex=0\n`;
   const blob = new Blob([contents], { type: "application/internet-shortcut" });
   const url = window.URL.createObjectURL(blob);
   const anchor = document.createElement("a");
@@ -180,9 +181,18 @@ export default function HomePage() {
       <div className={styles.background} aria-hidden="true" />
       <div className={styles.backgroundShade} aria-hidden="true" />
 
+      <aside className={`${styles.desktopAds} ${styles.desktopAdsLeft}`} aria-label="Advertisements">
+        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_LEFT_TOP} />
+        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_LEFT_BOTTOM} />
+      </aside>
+      <aside className={`${styles.desktopAds} ${styles.desktopAdsRight}`} aria-label="Advertisements">
+        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_RIGHT_TOP} />
+        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_RIGHT_BOTTOM} />
+      </aside>
+
       <nav className={styles.nav} aria-label="Website controls">
         <Link href="/" className={`${styles.navItem} ${styles.brand}`} aria-label="PERKRUCIBLE home">
-          <Image src="/favicon-32x32.png" alt="" width={20} height={20} />
+          <Image src="/images/milk-bottle-grid-v1.png" alt="" width={20} height={20} />
           <span className={styles.desktopLabel}>PERKRUCIBLE</span>
           <span className={styles.mobileLabel}>Home</span>
         </Link>
@@ -242,7 +252,7 @@ export default function HomePage() {
               WEBAPPS
             </button>
             <p>
-              A growing collection of purpose-built tools, experiments, and questionable conveniences forged for everyday use. Expand the collection to browse what is currently operational.
+              A collection of purpose-built tools, experiments, and questionable conveniences for everyday use. Expand the collection to browse what is currently operational.
             </p>
             <button
               className={styles.expandControl}
@@ -281,6 +291,9 @@ export default function HomePage() {
               </Link>
             </section>
           ))}
+        </div>
+        <div className={styles.mobileAds} aria-label="Advertisement">
+          <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_MOBILE_BOTTOM} />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import type {
   ClosetItem,
   ClosetLayer,
@@ -18,6 +19,7 @@ import {
   saveSubsectionConfig,
 } from "./db";
 import ImageCutoutEditor from "./ImageCutoutEditor";
+import styles from "./closet.module.css";
 
 const LAYERS: ClosetLayer[] = ["Hat", "Top", "Jacket", "Bottoms", "Shoes"];
 
@@ -103,8 +105,27 @@ const CONTROL_ROW_BASE_TOP: Record<ClosetLayer, number> = {
 };
 
 const CONTROL_ROW_GAP = 48;
-const BUTTON_HOVER = "#d89b1d";
+const BUTTON_HOVER = "#d8dcdf";
 const BUTTON_HOVER_TEXT = "#111111";
+
+let backgroundRemoverPromise: Promise<any> | null = null;
+
+async function removeBackgroundLocally(imageUrl: string): Promise<string> {
+  if (!backgroundRemoverPromise) {
+    backgroundRemoverPromise = import("@huggingface/transformers").then(({ pipeline }) =>
+      pipeline("background-removal", "onnx-community/ormbg-ONNX", { dtype: "q8" })
+    );
+  }
+  const remover = await backgroundRemoverPromise;
+  const output = await remover([imageUrl]);
+  const blob = await output[0].toBlob();
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("Could not read the automatic cutout."));
+    reader.readAsDataURL(blob);
+  });
+}
 
 function slotKey(layer: ClosetLayer, slot: SlotNumber): SlotKey {
   return `${layer}-${slot}` as SlotKey;
@@ -236,7 +257,7 @@ function usePressableButtonStyle(base: React.CSSProperties, active = false): Rea
     transition:
       "background 0.16s ease, color 0.16s ease, border-color 0.16s ease, transform 0.08s ease, box-shadow 0.16s ease",
     transform: active ? "translateY(0) scale(1.01)" : "translateY(0) scale(1)",
-    boxShadow: active ? "0 0 0 1px rgba(216,155,29,0.32), 0 0 18px rgba(216,155,29,0.18)" : "none",
+    boxShadow: active ? "0 0 0 1px rgba(216,220,223,0.32), 0 0 18px rgba(216,220,223,0.14)" : "none",
     ...base,
   };
 }
@@ -268,7 +289,8 @@ function PressableButton({
             : active
             ? (style?.color as string) ?? "#111111"
             : (style?.color as string),
-        borderColor: hovered ? BUTTON_HOVER : (style?.borderColor as string),
+        outline: hovered ? "1px solid rgba(216,220,223,.72)" : "none",
+        outlineOffset: hovered ? "-1px" : undefined,
       },
       active
     ),
@@ -764,15 +786,17 @@ const dragRef = useRef<{
       });
 
       setOriginalEditorImage(rawDataUrl);
-
-      if (skipPhotoTips) {
+      setStatus("Removing the background on this device… First use may take a moment.");
+      try {
+        const automaticCutout = await removeBackgroundLocally(rawDataUrl);
+        const resizedCutout = await resizeImage(automaticCutout, 500, 500);
+        setPreview(resizedCutout);
+        setStatus("Background removed automatically. Use Refine only if an edge needs correction.");
+      } catch (cutoutError) {
+        console.error(cutoutError);
         setEditorImage(rawDataUrl);
         setEditorOpen(true);
-        setStatus("Refine the selection, then apply the cutout.");
-      } else {
-        setPendingEditorImage(rawDataUrl);
-        setPhotoTipsOpen(true);
-        setStatus("Review photo tips, then continue.");
+        setStatus("Automatic removal was unavailable, so the manual correction tool was opened.");
       }
     } catch (error) {
       console.error(error);
@@ -1832,6 +1856,7 @@ onTouchCancel={(e) => {
 
   return (
     <main
+      className={styles.closetApp}
       style={{
         minHeight: "100vh",
         background: "#121212",
@@ -1839,8 +1864,17 @@ onTouchCancel={(e) => {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+      <nav className={styles.appNav}>
+        <Link href="/">Perkrucible</Link>
+        <span>Digital Closet</span>
+        <div><button type="button" onClick={exportCloset}>Export</button><button type="button" onClick={() => importInputRef.current?.click()}>Import</button></div>
+      </nav>
+      <input ref={importInputRef} type="file" accept="application/json,.json" onChange={handleImportCloset} hidden />
+      <header className={styles.closetTitle}><img src="/images/digital-closet-title-v1.png" alt="Digital Closet" /></header>
+      <div className={styles.closetWorkspace} style={{ maxWidth: "1280px", margin: "0 auto" }}>
+        <span className={`${styles.appCorner} ${styles.appCornerTl}`} aria-hidden="true" /><span className={`${styles.appCorner} ${styles.appCornerTr}`} aria-hidden="true" /><span className={`${styles.appCorner} ${styles.appCornerBl}`} aria-hidden="true" /><span className={`${styles.appCorner} ${styles.appCornerBr}`} aria-hidden="true" />
         <section
+          className={styles.controlDeck}
           style={{
             background: "#181818",
             borderRadius: "24px",
@@ -1850,6 +1884,7 @@ onTouchCancel={(e) => {
           }}
         >
           <div
+            className={styles.primaryControls}
             style={{
               display: "flex",
               justifyContent: "space-between",
@@ -2017,6 +2052,7 @@ onTouchCancel={(e) => {
           )}
 
           <div
+            className={styles.wardrobeFrame}
             style={{
               background: "#101010",
               border: "1px solid #2a2a2a",
@@ -2028,6 +2064,7 @@ onTouchCancel={(e) => {
             }}
           >
             <div
+              className={styles.builderViewport}
               onTouchStart={handleBuilderTouchStart}
               onTouchEnd={handleBuilderTouchEnd}
               style={{
@@ -2040,6 +2077,7 @@ onTouchCancel={(e) => {
               }}
             >
               <div
+                className={styles.wardrobeStage}
                 ref={builderRef}
                 style={{
                   position: "relative",
@@ -2049,6 +2087,7 @@ onTouchCancel={(e) => {
                 }}
               >
                 <div
+                  className={styles.wardrobeBackdrop}
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -2064,6 +2103,7 @@ onTouchCancel={(e) => {
                 {renderArrowRows("right")}
 
                 <div
+                  className={styles.stageToolbar}
                   style={{
                     position: "absolute",
                     top: "12px",
@@ -2369,7 +2409,7 @@ onTouchCancel={(e) => {
       left: "50%",
       transform: "translateX(-50%)",
       zIndex: 36,
-      background: "rgba(216,155,29,0.92)",
+      background: "rgba(216,220,223,0.92)",
       color: "#111",
       padding: "6px 12px",
       borderRadius: "12px",
@@ -2665,6 +2705,7 @@ onTouchCancel={(e) => {
           />
 
           <aside
+            className={styles.closetWindow}
             style={{
               position: "fixed",
               top: 0,
@@ -2692,44 +2733,6 @@ onTouchCancel={(e) => {
               <h2 style={{ margin: 0, color: "white" }}>Closet</h2>
 
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                <input
-                  ref={importInputRef}
-                  type="file"
-                  accept="application/json,.json"
-                  onChange={handleImportCloset}
-                  style={{ display: "none" }}
-                />
-
-                <PressableButton
-                  onClick={exportCloset}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: "10px",
-                    border: "1px solid #333",
-                    background: "#101010",
-                    color: "white",
-                    cursor: "pointer",
-                    fontWeight: 700,
-                  }}
-                >
-                  Export Closet
-                </PressableButton>
-
-                <PressableButton
-                  onClick={() => importInputRef.current?.click()}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: "10px",
-                    border: "1px solid #333",
-                    background: "#101010",
-                    color: "white",
-                    cursor: "pointer",
-                    fontWeight: 700,
-                  }}
-                >
-                  Import Closet
-                </PressableButton>
-
                 <PressableButton
                   onClick={() => setClearClosetModalOpen(true)}
                   style={{
@@ -2756,7 +2759,7 @@ onTouchCancel={(e) => {
                     cursor: "pointer",
                   }}
                 >
-                  Close
+                  ×
                 </PressableButton>
               </div>
             </div>
@@ -2982,7 +2985,7 @@ onTouchCancel={(e) => {
                                   padding: "6px 10px",
                                   borderRadius: "10px",
                                   border: "1px solid #333",
-                                  background: loadedFlashId === item.id ? "#b88912" : "#101010",
+                                  background: loadedFlashId === item.id ? "#d8dcdf" : "#101010",
                                   color: loadedFlashId === item.id ? "#111" : "white",
                                   cursor: "pointer",
                                   zIndex: 2,
@@ -3327,7 +3330,7 @@ onTouchCancel={(e) => {
                   cursor: "pointer",
                 }}
               >
-                Close
+                ×
               </PressableButton>
             </div>
 
@@ -3652,6 +3655,7 @@ onTouchCancel={(e) => {
           />
 
           <div
+            className={styles.savedOutfitsWindow}
             style={{
               position: "fixed",
               top: "50%",
@@ -3687,7 +3691,7 @@ onTouchCancel={(e) => {
                   cursor: "pointer",
                 }}
               >
-                Close
+                ×
               </PressableButton>
             </div>
 
