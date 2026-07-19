@@ -74,13 +74,6 @@ type AppState = {
 const STORAGE_KEY = "iron-engine-state-v9";
 const DEFAULT_DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-const TITLE_DESKTOP_WIDTH = 9077;
-const TITLE_DESKTOP_OFFSET_Y = 493;
-const TITLE_MOBILE_WIDTH = 900;
-const TITLE_MOBILE_OFFSET_Y = 200;
-const APP_DESKTOP_OFFSET_Y = -1090;
-const APP_MOBILE_OFFSET_Y = -395;
-
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -969,39 +962,30 @@ export default function IronEnginePage() {
     <div className={styles.page}>
       <div className={styles.backdropGlow} />
 
-      <div
-        className={styles.shell}
-        style={
-          {
-            transform: `translateY(${APP_DESKTOP_OFFSET_Y}px)`,
-            ["--mobile-shell-offset" as any]: `${APP_MOBILE_OFFSET_Y}px`,
-          } as React.CSSProperties
-        }
-      >
+      <div className={styles.shell}>
         <input ref={fileInputRef} type="file" accept="application/json" onChange={handleImportFile} className={styles.hiddenFileInput} />
 
-        <div
-          className={styles.titleImageWrapTop}
-          style={
-            {
-              transform: `translate(0px, ${TITLE_DESKTOP_OFFSET_Y}px)`,
-              ["--mobile-title-offset-y" as any]: `${TITLE_MOBILE_OFFSET_Y}px`,
-            } as React.CSSProperties
-          }
-        >
-          <img
-            src="/images/iron-engine-title.png"
-            alt="Iron Engine"
-            className={styles.titleImage}
-            style={
-              {
-                width: `${TITLE_DESKTOP_WIDTH}px`,
-                ["--mobile-title-width" as any]: `${TITLE_MOBILE_WIDTH}px`,
-              } as React.CSSProperties
-            }
-          />
-        </div>
+        <div className={styles.interfaceFrame}>
+          <span className={`${styles.frameEdge} ${styles.frameEdgeTop}`} aria-hidden="true" />
+          <span className={`${styles.frameEdge} ${styles.frameEdgeRight}`} aria-hidden="true" />
+          <span className={`${styles.frameEdge} ${styles.frameEdgeBottom}`} aria-hidden="true" />
+          <span className={`${styles.frameEdge} ${styles.frameEdgeLeft}`} aria-hidden="true" />
+          <span className={`${styles.frameCorner} ${styles.frameCornerTopLeft}`} aria-hidden="true" />
+          <span className={`${styles.frameCorner} ${styles.frameCornerTopRight}`} aria-hidden="true" />
+          <span className={`${styles.frameCorner} ${styles.frameCornerBottomRight}`} aria-hidden="true" />
+          <span className={`${styles.frameCorner} ${styles.frameCornerBottomLeft}`} aria-hidden="true" />
 
+          <header className={styles.titleSanctum}>
+            <div className={styles.titleImageWrapTop}>
+              <img
+                src="/images/iron-engine-title-v2.png"
+                alt="Iron Engine"
+                className={styles.titleImage}
+              />
+            </div>
+          </header>
+
+          <div className={styles.interfaceScroll}>
         <div className={styles.topUtilityRow}>
           <button type="button" className={styles.utilityBox} onClick={exportData}>
             <span className={styles.utilityIcon}>⇪</span>
@@ -1015,23 +999,21 @@ export default function IronEnginePage() {
 
         <header className={styles.heroCard}>
           <div className={styles.heroStats}>
-            <div className={styles.statCard}>
-              <span className={styles.statLabel}>Pinned routine</span>
-              <strong className={styles.statValue}>{pinnedProgram?.name || "No routine selected yet"}</strong>
+            <div className={styles.statCard} title="Pinned routine">
+              <strong className={styles.statValue}>{pinnedProgram?.name || "No routine pinned"}</strong>
               <div className={styles.statSubtext}>
                 {pinnedProgram ? `${pinnedProgramCompletedCount}/${pinnedProgramTotalCount} complete` : ""}
               </div>
             </div>
-            <div className={styles.statCard}>
-              <span className={styles.statLabel}>Pinned tracker</span>
-              <strong className={styles.statValue}>{pinnedTracker ? pinnedTracker.name : "No tracker selected yet"}</strong>
+            <div className={styles.statCard} title="Pinned tracker">
+              <strong className={styles.statValue}>{pinnedTracker ? pinnedTracker.name : "No tracker pinned"}</strong>
               {trackerCountText ? <div className={styles.statSubtext}>{trackerCountText}</div> : null}
             </div>
           </div>
         </header>
 
         <div className={styles.tabBar}>
-          {(["settings", "routines", "tracker"] as TabKey[]).map((tabKey) => (
+          {(["routines", "tracker"] as TabKey[]).map((tabKey) => (
             <button
               key={tabKey}
               type="button"
@@ -1041,6 +1023,15 @@ export default function IronEnginePage() {
               {tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}
             </button>
           ))}
+          <button
+            type="button"
+            className={`${styles.iconOnlyButton} ${tab === "settings" ? styles.tabButtonActive : ""}`}
+            onClick={() => setTab("settings")}
+            aria-label="Settings"
+            title="Settings"
+          >
+            ⚙
+          </button>
         </div>
 
         {tab === "routines" && (
@@ -1310,6 +1301,8 @@ export default function IronEnginePage() {
             </div>
           </section>
         )}
+          </div>
+        </div>
       </div>
 
       {workoutModalDayId && (

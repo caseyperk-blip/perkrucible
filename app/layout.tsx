@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://perkrucible.com"),
   title: "PERKRUCIBLE",
   description: "The Digital Crucible",
 
@@ -24,14 +25,21 @@ export const metadata: Metadata = {
   openGraph: {
     title: "PERKRUCIBLE",
     description: "The Digital Crucible",
-    images: ["/og-image.png"],
+    images: [
+      {
+        url: "/images/perkrucible-link-preview-v2.png",
+        width: 1728,
+        height: 900,
+        alt: "Three knights representing Iron Engine, Milk, and Digital Closet",
+      },
+    ],
   },
 
   twitter: {
     card: "summary_large_image",
     title: "PERKRUCIBLE",
     description: "The Digital Crucible",
-    images: ["/og-image.png"],
+    images: ["/images/perkrucible-link-preview-v2.png"],
   },
 };
 
