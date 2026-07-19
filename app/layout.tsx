@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@neondatabase/auth-ui/css";
@@ -18,6 +19,9 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://perkrucible.com"),
   title: "PERKRUCIBLE",
   description: "The Digital Crucible",
+  other: {
+    "google-adsense-account": "ca-pub-2021237326206654",
+  },
 
   icons: {
     icon: "/images/milk-bottle-grid-v1.png",
@@ -54,6 +58,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body><Providers>{children}</Providers></body>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2021237326206654"
+        crossOrigin="anonymous"
+        strategy="beforeInteractive"
+      />
     </html>
   );
 }
