@@ -92,30 +92,49 @@ const iosInstructions = [
 const patchNotes = [
   {
     title: "PERKRUCIBLE",
-    date: "Homepage redesign in progress",
+    date: "July 2026",
     items: [
-      "A new expanding archive layout replaces the original tile wall.",
-      "Iron Engine now appears as v0.2-beta.",
+      "Rebuilt the homepage as one expanding archive, with a cleaner layout on desktop and mobile.",
+      "Added Quest Index and Milk, plus new artwork and backgrounds across the site.",
+      "Updated the site icon, link preview, navigation, shortcuts, and patch notes.",
+    ],
+  },
+  {
+    title: "Quest Index v0.1-beta",
+    date: "Now available",
+    items: [
+      "Added quest sections, custom filters, searching, reordering, and a completed archive.",
+      "Added a calendar view, import and export, and automatic local saving.",
+    ],
+  },
+  {
+    title: "Milk",
+    date: "Archive opened",
+    items: [
+      "Opened the Milk archive with separate sections for essays, notes, and ongoing findings.",
+      "Entries can now include edited text and clickable links.",
     ],
   },
   {
     title: "Iron Engine v0.2-beta",
-    date: "Current build",
+    date: "Updated",
     items: [
-      "Dark-fantasy interface redesign with existing workout and tracker features preserved.",
+      "Reworked the full interface while keeping the workout, routine, meal, and tracking tools intact.",
+      "Improved saving, import and export, navigation, and the mobile layout.",
     ],
   },
   {
     title: "Digital Closet v0.1-beta",
-    date: "Current build",
+    date: "Updated",
     items: [
-      "Layer controls, closet organization, image cutouts, and import/export remain available.",
+      "Cleaned up the closet and saved-outfit menus on both desktop and mobile.",
+      "Improved the clothing workspace, image cutouts, controls, and import/export flow.",
     ],
   },
 ];
 
 const patchTickerText =
-  "PERKRUCIBLE homepage archive rebuilt   —   Iron Engine v0.2-beta now live   —   Digital Closet v0.1-beta available   —   New files are being prepared";
+  "PERKRUCIBLE homepage rebuilt   —   Quest Index v0.1-beta now available   —   Milk archive opened   —   Iron Engine and Digital Closet updated";
 
 function downloadWindowsShortcut() {
   const contents = `[InternetShortcut]\nURL=https://perkrucible.com/\nIconFile=https://perkrucible.com/images/milk-bottle-grid-v1.png\nIconIndex=0\n`;
