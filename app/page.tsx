@@ -182,12 +182,12 @@ export default function HomePage() {
       <div className={styles.backgroundShade} aria-hidden="true" />
 
       <aside className={`${styles.desktopAds} ${styles.desktopAdsLeft}`} aria-label="Advertisements">
-        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_LEFT_TOP} />
-        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_LEFT_BOTTOM} />
+        <AdSlot slot="8614653467" />
+        <AdSlot slot="9649221891" />
       </aside>
       <aside className={`${styles.desktopAds} ${styles.desktopAdsRight}`} aria-label="Advertisements">
-        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_RIGHT_TOP} />
-        <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_RIGHT_BOTTOM} />
+        <AdSlot slot="7246299692" />
+        <AdSlot slot="6376191294" />
       </aside>
 
       <nav className={styles.nav} aria-label="Website controls">
@@ -293,7 +293,7 @@ export default function HomePage() {
           ))}
         </div>
         <div className={styles.mobileAds} aria-label="Advertisement">
-          <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_HOME_MOBILE_BOTTOM} />
+          <AdSlot slot="5513847404" />
         </div>
       </div>
 

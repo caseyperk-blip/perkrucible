@@ -7,7 +7,7 @@ declare global {
 }
 
 export function AdSlot({ slot, className }: { slot?: string; className?: string }) {
-  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  const client = "ca-pub-2021237326206654";
 
   useEffect(() => {
     if (!client || !slot) return;
