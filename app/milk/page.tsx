@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { authClient } from "@/lib/auth/client";
+import { TypingText } from "../components/TypingText";
 import styles from "./milk.module.css";
 
 type Entry = { id: string; title: string; body: string; createdAt: string };
@@ -93,11 +92,10 @@ export default function MilkPage() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.pattern} aria-hidden="true">{Array.from({ length: 320 }, (_, index) => <img key={index} className={index % 2 ? styles.flip : ""} src="/images/milk-bottle-grid-v1.png" alt="" />)}</div>
-      <nav className={styles.nav}><Link href="/">Perkrucible</Link><span>Milk</span><div>{canEdit ? <button type="button" onClick={async () => { await authClient.signOut(); location.reload(); }}>Sign out</button> : <Link href="/auth/sign-in">Editor</Link>}</div></nav>
       <section className={styles.archive}>
-        <span className={`${styles.corner} ${styles.tl}`} /><span className={`${styles.corner} ${styles.tr}`} /><span className={`${styles.corner} ${styles.bl}`} /><span className={`${styles.corner} ${styles.br}`} />
-        <header className={styles.header}><p>Perkrucible Archive</p><h1>MILK</h1><span>A living collection devoted to the substance itself.</span></header>
+        <header className={styles.header}>
+          <h1><TypingText text="Milk" /></h1>
+        </header>
         {loadError && <p className={styles.empty}>{loadError}</p>}
         <div className={styles.sections}>
           {sections.map((section) => <section className={styles.section} key={section.id}>

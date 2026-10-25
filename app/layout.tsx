@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@neondatabase/auth-ui/css";
 import { Providers } from "./providers";
+import { SiteChrome } from "./components/SiteChrome";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,26 +18,22 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://perkrucible.com"),
   title: "PERKRUCIBLE",
-  description: "The Digital Crucible",
-  other: {
-    "google-adsense-account": "ca-pub-2021237326206654",
-  },
-
+  description: "A personal archive and repository of phantasmagoric information.",
   icons: {
-    icon: "/images/milk-bottle-grid-v1.png",
-    shortcut: "/images/milk-bottle-grid-v1.png",
-    apple: "/images/milk-bottle-grid-v1.png",
+    icon: "/images/perkrucible-p-favicon.png",
+    shortcut: "/images/perkrucible-p-favicon.png",
+    apple: "/images/perkrucible-p-favicon.png",
   },
 
   openGraph: {
     title: "PERKRUCIBLE",
-    description: "The Digital Crucible",
+    description: "A personal archive and repository of phantasmagoric information.",
     images: [
       {
-        url: "/images/perkrucible-link-preview-v2.png",
-        width: 1728,
-        height: 900,
-        alt: "Three knights representing Iron Engine, Milk, and Digital Closet",
+        url: "/images/perkrucible-social-preview.jpg",
+        width: 2172,
+        height: 724,
+        alt: "PERKRUCIBLE — Personal Archive",
       },
     ],
   },
@@ -44,8 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "PERKRUCIBLE",
-    description: "The Digital Crucible",
-    images: ["/images/perkrucible-link-preview-v2.png"],
+    description: "A personal archive and repository of phantasmagoric information.",
+    images: ["/images/perkrucible-social-preview.jpg"],
   },
 };
 
@@ -55,15 +52,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2021237326206654"
-          crossOrigin="anonymous"
-        />
-      </head>
-      <body><Providers>{children}</Providers></body>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`} style={{ colorScheme: "dark" }}>
+      <body><Providers><SiteChrome>{children}</SiteChrome></Providers></body>
     </html>
   );
 }

@@ -1,0 +1,23 @@
+.page {
+  min-height: 78vh;
+  display: grid;
+  place-items: center;
+  padding: 92px 20px 70px;
+  color: #f8f3ef;
+  background: radial-gradient(ellipse at 50% 46%, rgba(255, 154, 74, .09), transparent 42%), #080808;
+}
+.panel {
+  width: min(480px, 100%);
+  padding: clamp(22px, 5vw, 42px);
+  border: 1px solid rgba(255, 224, 198, .4);
+  background: rgba(13, 12, 12, .92);
+  box-shadow: 0 0 10px rgba(255,255,255,.14), 0 0 42px rgba(255, 135, 62, .14), inset 0 0 28px rgba(255, 166, 89, .045);
+}
+.eyebrow { margin: 0 0 11px; color: #e9c5a3; font: 8px/1.6 var(--font-geist-mono),monospace; letter-spacing: .16em; text-align: center; }
+.panel h1 { margin: 0 0 25px; color: #fffaf6; font: 400 clamp(27px, 7vw, 38px)/1.1 Georgia,"Times New Roman",serif; text-align: center; text-shadow: 0 0 9px rgba(255,255,255,.58), 1px 0 #ff9d4d; }
+.panel :global([data-slot="card"]) { border-color: rgba(255, 224, 198, .22); background: rgba(8,8,8,.46); box-shadow: none; }
+.panel :global(button) { border-color: rgba(255, 224, 198, .4); background: #ede5df; color: #181310; box-shadow: 0 0 12px rgba(255,255,255,.2), 0 0 20px rgba(255,145,65,.12); }
+.panel :global(button:hover) { background: #fff8f2; }
+.panel :global(input) { border-color: rgba(255, 224, 198, .3); background: #090909; color: #fff; }
+.panel :global(a) { color: #ffd1a5; }
+@media (prefers-reduced-motion: reduce) { .panel * { scroll-behavior: auto; } }

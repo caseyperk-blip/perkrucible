@@ -1,0 +1,41 @@
+.ticker {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 34px;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 118, 49, .54);
+  background: rgba(5, 6, 8, .93);
+  color: #e9783b;
+  display: flex;
+  align-items: center;
+  font: 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .045em;
+  text-shadow: 0 0 7px rgba(235, 99, 35, .4);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  flex: 0 0 auto;
+  animation: odyssey-scroll 1200s linear infinite;
+  will-change: transform;
+}
+
+.text {
+  display: block;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding-right: 3rem;
+}
+
+@keyframes odyssey-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; }
+}

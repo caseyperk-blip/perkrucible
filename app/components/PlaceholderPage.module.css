@@ -1,0 +1,52 @@
+.page {
+  min-height: min(720px, 78vh);
+  padding: clamp(90px, 13vw, 170px) max(24px, calc((100vw - 900px) / 2));
+  color: #ece6ed;
+  background: #191a1c;
+  text-align: center;
+}
+
+.centered { text-align: center; }
+.centered p { margin-left: auto; margin-right: auto; }
+
+.code,.return {
+  color: #aaa4af;
+  font: 10px/1.5 var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+}
+
+.page h1 {
+  margin: 22px 0 12px;
+  font: 400 clamp(42px, 8vw, 82px)/1 Georgia, "Times New Roman", serif;
+  text-shadow: 1.5px 0 rgba(236,83,255,.42), -1.5px 0 rgba(57,225,239,.32);
+  animation: placeholderJitter 5s steps(1,end) infinite;
+}
+
+.page p { max-width: 620px; margin: 0 auto; color: #bcb6c0; font-size: 16px; line-height: 1.7; }
+
+.panel {
+  margin-top: 48px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px dashed rgba(233, 91, 246, .36);
+  color: #aaa4af;
+  background: radial-gradient(ellipse at center, rgba(207, 60, 227, .1), transparent 60%), rgba(0,0,0,.1);
+  font: 10px var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+}
+
+.panelMark { color: #ec76f5; font: 52px/1 Georgia, serif; text-shadow: 2px 0 #39e5ef; }
+.panel small { color: #77747b; font: 9px var(--font-geist-mono), monospace; letter-spacing: .06em; }
+.return { display: inline-block; margin-top: 34px; color: #e48dea; text-decoration: none; }
+.return:hover { text-shadow: 2px 0 #e74eff, -2px 0 #37e6ef; }
+@keyframes placeholderJitter {
+  0%, 77%, 100% { transform: translateX(0); }
+  78% { transform: translateX(.8px); }
+  79% { transform: translateX(-.8px); }
+  81% { transform: translateX(.4px); }
+  82% { transform: translateX(0); }
+}

@@ -1,0 +1,158 @@
+.page {
+  min-height: 80vh;
+  padding: clamp(92px, 12vw, 150px) max(22px, calc((100vw - 1160px) / 2)) 110px;
+  color: #f4f4f4;
+  background: #191a1c;
+}
+
+.heading { margin: 0 auto 58px; text-align: center; }
+.expand,.endNote,.recipe h2 {
+  color: #f0f0f0;
+  font: 9px/1.5 var(--font-geist-mono), monospace;
+  letter-spacing: .15em;
+  text-shadow: 1px 0 rgba(255, 55, 80, .48), -1px 0 rgba(55, 225, 245, .42), 0 1px rgba(205, 245, 95, .2);
+}
+.heading h1 {
+  margin: 20px 0 13px;
+  color: #fff;
+  font: 400 clamp(42px, 7vw, 76px)/1 Georgia, "Times New Roman", serif;
+  letter-spacing: -.04em;
+  text-shadow: 2px 0 rgba(255, 50, 65, .48), -2px 0 rgba(55, 225, 245, .4), 0 1px rgba(205, 245, 95, .22);
+  animation: titleJitter 5s steps(1, end) infinite;
+}
+.heading p { margin: 0; color: #ddd; font: italic 15px/1.6 Georgia, serif; }
+
+.collection { display: grid; gap: 20px; }
+.drinkFrame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .26);
+  background: #111214;
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+.drinkFrame:has(.drink[open]) {
+  border-color: rgba(255, 255, 255, .62);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .25), 1px 0 rgba(255, 55, 80, .16), -1px 0 rgba(55, 225, 245, .12);
+}
+.drink { margin: 0; border: 0; background: transparent; }
+.summary {
+  display: grid;
+  grid-template-columns: minmax(220px, .72fr) minmax(0, 1.28fr);
+  min-height: 340px;
+  cursor: pointer;
+  list-style: none;
+}
+.summary::-webkit-details-marker { display: none; }
+.pourControl { position: absolute; z-index: 4; top: 12px; right: 12px; }
+.pourButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 5px 8px 5px 10px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  background: rgba(11, 11, 14, .82);
+  color: #fff;
+  font: 7px/1.2 var(--font-geist-mono), monospace;
+  letter-spacing: .1em;
+  cursor: pointer;
+}
+.pourButton:hover,.pourButton:focus-visible { border-color: #fff; color: white; outline: none; box-shadow: 1px 0 rgba(255, 55, 80, .4), -1px 0 rgba(55, 225, 245, .3), 0 1px rgba(205, 245, 95, .18); }
+.info {
+  position: relative;
+  display: inline-grid;
+  width: 15px;
+  height: 15px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: #fff;
+  font: bold 10px/1 Georgia, serif;
+  letter-spacing: 0;
+  cursor: help;
+}
+.tooltip {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: -3px;
+  z-index: 8;
+  width: 225px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, .52);
+  background: #101114;
+  color: #f5f5f5;
+  font: 10px/1.5 var(--font-geist-mono), monospace;
+  letter-spacing: .03em;
+  text-align: left;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-3px);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 140ms;
+  pointer-events: none;
+}
+.info:hover .tooltip,.info:focus-visible .tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+.info:focus-visible { outline: 1px solid white; outline-offset: 2px; }
+.imagePlaceholder {
+  position: relative;
+  min-height: 340px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #050506;
+  border-right: 1px solid rgba(255, 255, 255, .18);
+}
+.imagePhoto { z-index: 0; object-fit: cover; object-position: center 64%; }
+
+.drinkTitle { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 32px clamp(22px, 5vw, 68px); }
+.name {
+  margin-top: 16px;
+  color: #fff;
+  font: 400 clamp(30px, 4.3vw, 50px)/1.04 Georgia, "Times New Roman", serif;
+  text-shadow: 1.5px 0 rgba(255, 55, 80, .44), -1.5px 0 rgba(55, 225, 245, .38), 0 1px rgba(205, 245, 95, .2);
+  animation: titleJitter 5s steps(1, end) infinite;
+}
+.expand { display: block; width: 100%; margin-top: 25px; color: #fff; font-size: 8px; }
+.summary:hover .name,.summary:focus-visible .name { color: #fff; }
+.summary:focus-visible { outline: 1px solid #fff; outline-offset: -3px; }
+
+.recipe {
+  display: grid;
+  grid-template-columns: minmax(190px, .72fr) minmax(0, 1.28fr);
+  gap: 35px;
+  padding: 28px clamp(22px, 5vw, 68px) 38px;
+  border-top: 1px dashed rgba(255, 255, 255, .3);
+  background: #141517;
+  animation: reveal 260ms ease both;
+}
+.recipe h2 { margin: 0 0 16px; font-size: 8px; }
+.recipe ul,.recipe ol { margin: 0; padding-left: 18px; }
+.recipe ul { list-style: none; padding: 0; }
+.recipe li,.recipe p { color: #d2cbd3; font: 13px/1.8 Georgia, serif; }
+.recipe ul li::before { content: "+  "; color: #fff; text-shadow: 1px 0 rgba(255, 55, 80, .44), -1px 0 rgba(55, 225, 245, .38), 0 1px rgba(205, 245, 95, .2); font-family: var(--font-geist-mono), monospace; }
+.recipe ol li { padding-left: 4px; }
+.recipe p { margin: 0; max-width: 68ch; }
+.recipe .pendingInstructions { color: #a9a1aa; font: italic 12px/1.6 Georgia, serif; }
+.poorModeBanner { display: block; margin: 12px 0 0; color: #fff; font: 9px/1.5 var(--font-geist-mono), monospace; letter-spacing: .16em; text-shadow: 1px 0 rgba(255, 55, 80, .48), -1px 0 rgba(55, 225, 245, .42), 0 1px rgba(205, 245, 95, .2); }
+.endNote { margin: 36px 0 0; text-align: center; font-size: 8px; opacity: .6; }
+
+@keyframes reveal { from { opacity: .3; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes titleJitter { 0%, 77%, 100% { transform: translateX(0); } 78% { transform: translateX(.6px); } 79% { transform: translateX(-.6px); } 81% { transform: translateX(.3px); } 82% { transform: translateX(0); } }
+
+@media (max-width: 680px) {
+  .page { padding: 90px 18px 82px; }
+  .heading { margin-bottom: 36px; }
+  .collection { gap: 14px; }
+  .summary { grid-template-columns: 1fr; }
+  .imagePlaceholder { min-height: 260px; border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .18); }
+  .pourControl { top: 10px; right: 10px; }
+  .pourButton { min-height: 28px; font-size: 6px; }
+  .drinkTitle { padding: 22px 20px 20px; }
+  .name { margin-top: 10px; }
+  .expand { margin-top: 17px; }
+  .recipe { grid-template-columns: 1fr; gap: 26px; padding: 24px 20px 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heading h1,.name,.drink,.recipe { animation: none; transition: none; }
+}

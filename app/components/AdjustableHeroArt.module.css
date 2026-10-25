@@ -1,0 +1,31 @@
+.stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.object {
+  position: absolute;
+  z-index: 1;
+  right: -54px;
+  bottom: 34px;
+  width: min(28vw, 360px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .32));
+}
+
+.object.savedObject { width: var(--saved-width); }
+
+.object img { display: block; width: 100%; height: auto; pointer-events: none; }
+
+@media (max-width: 900px) {
+  .object { right: -46px; width: min(42vw, 300px); }
+  .object.savedObject { width: min(var(--saved-width), 42vw); }
+}
+
+@media (max-width: 620px) {
+  .object { right: -42px; width: min(48vw, 225px); }
+  .object.savedObject { width: min(var(--saved-width), 48vw); }
+}

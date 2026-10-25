@@ -1,5 +1,6 @@
 "use client";
 
+import "./components/crypto-random-uuid";
 import { NeonAuthUIProvider } from "@neondatabase/auth-ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,5 +8,5 @@ import { authClient } from "@/lib/auth/client";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  return <NeonAuthUIProvider authClient={authClient} navigate={router.push} replace={router.replace} onSessionChange={() => router.refresh()} redirectTo="/milk" Link={Link} defaultTheme="dark">{children}</NeonAuthUIProvider>;
+  return <NeonAuthUIProvider authClient={authClient} navigate={router.push} replace={router.replace} onSessionChange={() => router.refresh()} redirectTo="/milk" Link={Link} defaultTheme="dark" signUp={false}>{children}</NeonAuthUIProvider>;
 }

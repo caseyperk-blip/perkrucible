@@ -22,10 +22,39 @@ body {
   background: #000;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 body {
   overflow-x: hidden;
   color: #fff;
   font-family: var(--site-font);
+  cursor: url("/cursors/rock-hand.cur"), auto;
+}
+
+a,
+button,
+[role="button"],
+summary,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: url("/cursors/middle-finger.cur"), pointer !important;
+}
+
+input:not([type="button"]):not([type="submit"]):not([type="reset"]),
+textarea,
+[contenteditable="true"] {
+  cursor: text;
 }
 
 button,
