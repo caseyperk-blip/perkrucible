@@ -28,6 +28,32 @@
 .longestMeasure { grid-area: 1 / 1; width: 100%; }
 .longestMeasure { visibility: hidden; pointer-events: none; }
 
+.previewLayer { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.previewMobile { inset: 0 auto 0 50%; width: min(390px, calc(100% - 24px)); transform: translateX(-50%); border-right: 1px solid rgba(89,232,237,.32); border-left: 1px solid rgba(89,232,237,.32); }
+.previewBox {
+  position: absolute;
+  left: min(var(--quote-left), calc(100% - clamp(200px, 22vw, 300px)));
+  top: var(--quote-top);
+  width: clamp(200px, 22vw, 300px);
+  max-width: calc(100vw - 36px);
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 1px dashed rgba(89, 232, 237, .72);
+  background: rgba(8, 10, 14, .22);
+  color: #f5edf4;
+  transform: rotate(-2.5deg);
+  font: 500 clamp(19px, 1.9vw, 28px)/1.08 "Caveat Handwriting", cursive;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,.95), 0 0 9px rgba(0,0,0,.8);
+}
+.previewBox span { visibility: hidden; }
+.previewBox span { width: 100%; }
+.previewActive { border-style: solid; border-color: #f16cff; background: rgba(8, 10, 14, .56); }
+.previewActive span { visibility: visible; }
+.previewMobile .previewBox { left: min(var(--quote-left), calc(100% - 88%)); width: 88%; max-width: none; font-size: 14px; line-height: 1.12; }
+
 @keyframes quoteJitter {
   0%, 77%, 100% { transform: translateX(0); }
   78% { transform: translateX(.7px); }
@@ -38,6 +64,7 @@
 
 @media (max-width: 900px) {
   .quote { width: min(40vw, 290px); font-size: clamp(18px, 2.6vw, 24px); }
+  .previewBox { width: min(40vw, 290px); font-size: clamp(18px, 2.6vw, 24px); }
 }
 
 @media (max-width: 620px) {
@@ -50,6 +77,8 @@
     padding: 0;
   }
   .quote { position: absolute; left: min(var(--quote-left), calc(100% - 88vw)); top: var(--quote-top); width: 88vw; max-width: none; font-size: 14px; line-height: 1.12; }
+  .previewBox { left: min(var(--quote-left), calc(100% - 88vw)); width: 88vw; max-width: none; font-size: 14px; line-height: 1.12; }
+  .previewDesktop .previewBox { left: min(var(--quote-left), calc(100% - 300px)); width: min(300px, calc(100vw - 36px)); max-width: none; font-size: 14px; line-height: 1.12; }
 }
 
 @media (prefers-reduced-motion: reduce) { .quote { transition: none; } }

@@ -82,7 +82,7 @@ const quotes = [
 
 const DECK_KEY = "perkrucible:quote-stack:unused-quotes:v2";
 const longestQuoteIndex = quotes.reduce((longest, quote, index) => quote.length > quotes[longest].length ? index : longest, 0);
-type QuotePosition = { left: number; top: number };
+export type QuotePosition = { left: number; top: number };
 
 function shuffledIndices() {
   const result = quotes.map((_, index) => index);
@@ -110,7 +110,7 @@ function drawQuotes(count: number) {
   return selected;
 }
 
-export function QuoteStack({ positions }: { positions: QuotePosition[] }) {
+export function QuoteStack({ positions, preview }: { positions: QuotePosition[]; preview?: { positions: QuotePosition[]; activeSlot: number; device: "desktop" | "mobile" } }) {
   const [indices, setIndices] = useState([0, 1, 2]);
   const [visible, setVisible] = useState([false, false, false]);
   const indicesRef = useRef(indices);
@@ -180,7 +180,7 @@ export function QuoteStack({ positions }: { positions: QuotePosition[] }) {
         {indices.map((index, slot) => (
           <div
             key={slot}
-            className={`${styles.quote} ${visible[slot] ? styles.visible : ""}`}
+            className={`${styles.quote} ${visible[slot] && !preview ? styles.visible : ""}`}
             data-slot={slot}
             style={{ "--quote-left": `${positions[slot].left}%`, "--quote-top": `${positions[slot].top}%` } as CSSProperties}
           >
@@ -189,6 +189,13 @@ export function QuoteStack({ positions }: { positions: QuotePosition[] }) {
           </div>
         ))}
       </div>
+      {preview && <div className={`${styles.previewLayer} ${preview.device === "mobile" ? styles.previewMobile : styles.previewDesktop}`} aria-hidden="true">
+        {preview.positions.map((position, slot) => (
+          <div key={slot} className={`${styles.previewBox} ${slot === preview.activeSlot ? styles.previewActive : ""}`} style={{ "--quote-left": `${position.left}%`, "--quote-top": `${position.top}%` } as CSSProperties}>
+            <span>“{quotes[longestQuoteIndex]}”</span>
+          </div>
+        ))}
+      </div>}
     </aside>
   );
 }

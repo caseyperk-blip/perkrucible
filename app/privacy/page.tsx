@@ -14,6 +14,11 @@ export default function PrivacyPage() {
       </section>
 
       <section>
+        <h2>Homepage layout settings</h2>
+        <p>The site owner can adjust the homepage quote positions and hero image layout while signed in. These layout choices are stored in the site database and shared with visitors so the homepage displays the same arrangement for everyone.</p>
+      </section>
+
+      <section>
         <h2>Trading card inquiries</h2>
         <p>If you submit a trade inquiry, the site collects the name and email address you enter, the card you ask about, and your message. The inquiry is saved in the site database so the site owner can review and reply through a private owner-only inbox. Inquiries are not displayed publicly. They remain in the database until removed by the site owner.</p>
         <p>If email notifications are configured, the inquiry details are sent to Resend to deliver a notification to the site owner. Your email address is used as the reply-to address so the owner can respond. It is not used for promotional email. Email delivery may not be available at all times; the inquiry is still saved for the owner to review.</p>

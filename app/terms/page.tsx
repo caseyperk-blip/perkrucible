@@ -13,6 +13,11 @@ export default function TermsPage() {
       </section>
 
       <section>
+        <h2>Homepage appearance</h2>
+        <p>The site owner may adjust the placement of homepage quotes and hero artwork. These settings are used to display the public homepage and may change as the site is maintained.</p>
+      </section>
+
+      <section>
         <h2>Trading card inquiries</h2>
         <p>A trade inquiry is a request to discuss a possible trade. Submitting one does not guarantee a response, that a card remains available, or that a trade will happen. Any trade must be separately agreed between the people involved. Provide a working email address if you want a reply, and do not include sensitive personal information in the message.</p>
         <p>Inquiry details are saved in the site database for the site owner to review. If email notifications are configured, the details may also be processed by Resend to deliver a notice to the site owner. See the <Link href="/privacy">Privacy Policy</Link> for more information.</p>

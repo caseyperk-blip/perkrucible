@@ -6,7 +6,27 @@
   color: var(--paper);
   background: #191a1c url("/images/fashion-square-after-dark.png") center top / cover fixed;
   overflow: hidden;
+  position: relative;
 }
+
+.editorControls { position: fixed; z-index: 1000; right: 18px; bottom: 18px; pointer-events: auto; }
+.editorToggle,
+.editorPanel { border: 1px solid rgba(241, 108, 255, .58); background: rgba(10, 10, 14, .88); color: var(--paper); box-shadow: 0 10px 36px rgba(0,0,0,.4); backdrop-filter: blur(12px); }
+.editorToggle { padding: 9px 13px; font: 11px/1.2 var(--font-geist-mono), monospace; letter-spacing: .04em; cursor: pointer; }
+.editorToggle:disabled { cursor: wait; opacity: .7; }
+.editorPanel { width: min(350px, calc(100vw - 32px)); max-height: min(78svh, 650px); overflow: auto; padding: 14px; }
+.editorHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font: 12px/1.3 var(--font-geist-mono), monospace; letter-spacing: .08em; text-transform: uppercase; }
+.editorHeader button { border: 0; background: none; color: inherit; font-size: 22px; cursor: pointer; }
+.targetTabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.targetTabs button { border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.06); color: inherit; padding: 8px; font: 11px var(--font-geist-mono), monospace; cursor: pointer; }
+.targetTabs button[aria-pressed="true"] { border-color: var(--cyan); background: rgba(89,232,237,.15); }
+.editorField { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin: 10px 0; color: #eee4ef; font: 11px/1.4 var(--font-geist-mono), monospace; }
+.editorField select,
+.editorField input { grid-column: 1 / -1; width: 100%; }
+.editorField select { padding: 7px; border: 1px solid rgba(255,255,255,.24); background: #15151a; color: inherit; }
+.editorField input[type="range"] { accent-color: var(--pink); }
+.editorField output { color: var(--cyan); }
+.editorHint { margin: 8px 0 12px; color: #c9c0cb; font: italic 12px/1.35 Georgia, serif; }
 
 .hero {
   --hero-base-height: clamp(520px, 70svh, 780px);
@@ -149,6 +169,8 @@
 }
 
 @media (max-width: 620px) {
+  .editorControls { right: 12px; bottom: 12px; }
+  .editorPanel { max-height: calc(100svh - 110px); }
   .hero { --hero-base-height: 68svh; }
   .heroLayout { display: flex; flex-direction: column; align-items: stretch; width: calc(100% - 38px); min-height: inherit; padding: 42px 0 30px; }
   .heroArtwork { background-position: center calc(48% + var(--hero-bg-offset, 0px)); filter: contrast(1.04) brightness(.98); }
