@@ -5,11 +5,17 @@ export default function TermsPage() {
   return <main className={styles.page}>
     <article className={styles.policy}>
       <h1>Terms of use</h1>
-      <p className={styles.updated}>Last updated October 29, 2026</p>
+      <p className={styles.updated}>Last updated November 5, 2026</p>
 
       <section>
         <h2>About this site</h2>
         <p>Perkrucible is a personal archive with interactive projects, games, and reference material. You may browse and use the public features for personal, lawful purposes. Features and content may change, be removed, or become unavailable as the site is maintained.</p>
+      </section>
+
+      <section>
+        <h2>Trading card inquiries</h2>
+        <p>A trade inquiry is a request to discuss a possible trade. Submitting one does not guarantee a response, that a card remains available, or that a trade will happen. Any trade must be separately agreed between the people involved. Provide a working email address if you want a reply, and do not include sensitive personal information in the message.</p>
+        <p>Inquiry details are saved in the site database for the site owner to review. If email notifications are configured, the details may also be processed by Resend to deliver a notice to the site owner. See the <Link href="/privacy">Privacy Policy</Link> for more information.</p>
       </section>
 
       <section>

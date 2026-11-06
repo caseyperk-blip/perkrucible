@@ -36,7 +36,7 @@ export function PhotoTicker() {
       const shouldScroll = contentWidth > viewport.clientWidth + 1;
       setOverflowing(shouldScroll);
       if (shouldScroll) {
-        const speed = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--odyssey-scroll-speed")) || 49;
+        const speed = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--odyssey-scroll-speed")) || 58;
         setDuration(Math.max(.1, contentWidth / speed));
       }
     };
@@ -59,7 +59,6 @@ export function PhotoTicker() {
         {[0, ...(overflowing ? [1] : [])].map((copy) => <div className={styles.group} data-card-group={copy === 0 ? "primary" : undefined} aria-hidden={copy > 0} key={copy}>
           {cards.map((card) => <Link className={styles.card} href={`/photos#${encodeURIComponent(card.id)}`} key={`${card.id}-${copy}`} aria-label={`View ${card.title}`}>
             <img src={card.thumbnailUrl} alt="" loading="lazy" />
-            <span>{card.title}</span>
           </Link>)}
         </div>)}
       </div>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./OdysseyTicker.module.css";
 
-export function OdysseyTicker() {
+export function OdysseyTicker({ bottomOffset = 0 }: { bottomOffset?: number }) {
   const textRef = useRef<HTMLSpanElement>(null);
   const [text, setText] = useState("");
   const [duration, setDuration] = useState<number | null>(null);
@@ -26,7 +26,7 @@ export function OdysseyTicker() {
     if (!text || !textRef.current) return;
     const measure = () => {
       if (textRef.current) {
-        const nextDuration = Math.max(45, textRef.current.scrollWidth / 49);
+        const nextDuration = Math.max(45, textRef.current.scrollWidth / 58);
         setDuration(nextDuration);
         document.documentElement.style.setProperty("--odyssey-scroll-speed", `${textRef.current.scrollWidth / nextDuration}px`);
         window.dispatchEvent(new Event("odyssey-scroll-speed-change"));
@@ -39,7 +39,7 @@ export function OdysseyTicker() {
   }, [text]);
 
   return (
-    <div className={styles.ticker} role="region" aria-roledescription="marquee" aria-label="The Odyssey by Homer, translated by Samuel Butler; Project Gutenberg ebook 1727">
+    <div className={styles.ticker} style={{ bottom: `${bottomOffset}px` }} role="region" aria-roledescription="marquee" aria-label="The Odyssey by Homer, translated by Samuel Butler; Project Gutenberg ebook 1727">
       <div className={styles.track} style={duration ? { animationDuration: `${duration}s` } : undefined}>
         <span className={styles.text} ref={textRef} aria-hidden="true">{text || "RETRIEVING THE ODYSSEY…"}</span>
         <span className={styles.text} aria-hidden="true">{text || "RETRIEVING THE ODYSSEY…"}</span>

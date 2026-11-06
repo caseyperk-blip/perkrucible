@@ -31,7 +31,7 @@ export function AccessPopup({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
     setBusy(true);
     setMessage("");
     try {
-      const destination = window.location.pathname === "/photos" ? "/photos" : "/milk";
+      const destination = `${window.location.pathname}${window.location.search}${window.location.hash}`;
       const result = await authClient.signIn.email({ email, password, callbackURL: destination });
       if (result.error) {
         setMessage(result.error.message || "Login failed. Check your details and try again.");

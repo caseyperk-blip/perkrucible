@@ -109,22 +109,15 @@ export function TradingCollection() {
   const [canManage, setCanManage] = useState(false);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [editing, setEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-  const [inquireOpen, setInquireOpen] = useState(false);
   const [uploadBusy, setUploadBusy] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [selectedFileCount, setSelectedFileCount] = useState(0);
   const [formBusy, setFormBusy] = useState(false);
   const [formMessage, setFormMessage] = useState("");
-  const [ownerMessage, setOwnerMessage] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const active = cards.find((card) => card.id === activeId);
   const closeCard = useCallback(() => {
     setActiveId(null);
-    setEditing(false);
-    setInquireOpen(false);
     window.history.replaceState(null, "", "/photos#album");
   }, []);
 
@@ -166,19 +159,11 @@ export function TradingCollection() {
   }, []);
 
   useEffect(() => {
-    if (active) {
-      setEditTitle(active.title);
-      setEditDescription(active.description);
-      setEditing(false);
-    }
-  }, [active?.id]);
-
-  useEffect(() => {
-    if (!activeId && !inquireOpen) return;
+    if (!activeId) return;
     const close = (event: KeyboardEvent) => { if (event.key === "Escape") closeCard(); };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
-  }, [activeId, inquireOpen, closeCard]);
+  }, [activeId, closeCard]);
 
   async function uploadCards(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -228,23 +213,13 @@ export function TradingCollection() {
     } finally { setUploadBusy(false); }
   }
 
-  async function saveCard(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!active) return;
-    setOwnerMessage("");
-    const response = await fetch(`/api/trade-cards/${active.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: editTitle, description: editDescription }) });
-    const data = await response.json();
-    if (!response.ok) { setOwnerMessage(data.error || "The card could not be saved."); return; }
-    setCards((current) => current.map((card) => card.id === active.id ? { ...card, ...data.card } : card));
-    setEditing(false);
-  }
-
-  async function deleteCard() {
-    if (!active || !window.confirm(`Remove “${active.title}” from the collection?`)) return;
-    const response = await fetch(`/api/trade-cards/${active.id}`, { method: "DELETE" });
-    if (!response.ok) { setOwnerMessage("The card could not be removed."); return; }
-    setCards((current) => current.filter((card) => card.id !== active.id));
-    setActiveId(null);
+  async function deleteCard(card: TradingCard) {
+    if (!canManage || !window.confirm(`Remove “${card.title}” from the collection?`)) return;
+    setUploadMessage("");
+    const response = await fetch(`/api/trade-cards/${card.id}`, { method: "DELETE" });
+    if (!response.ok) { setUploadMessage("The card could not be removed."); return; }
+    setCards((current) => current.filter((item) => item.id !== card.id));
+    if (activeId === card.id) closeCard();
   }
 
   async function sendInquiry(event: FormEvent<HTMLFormElement>) {
@@ -270,7 +245,7 @@ export function TradingCollection() {
 
   return <main className={styles.page}>
     <header className={styles.header}><div className={styles.titleRow}><span className={styles.headerCount}>{cards.length} LEFT</span></div>
-      <p className={styles.description}>Every card shown is available to trade for a card of similar value. Select a card to see its details.</p>
+      <p className={styles.description}>Every card shown is available to trade for a card of similar value.</p>
     </header>
 
     {canManage && <section className={styles.ownerPanel} aria-label="Manage collection">
@@ -287,10 +262,12 @@ export function TradingCollection() {
 
     <section id="album" className={styles.album} aria-label="Trading card collection">
       {cards.length ? <div className={styles.grid}>
-        {cards.map((card) => <button className={styles.card} type="button" key={card.id} onClick={() => { setActiveId(card.id); window.history.replaceState(null, "", `/photos#${encodeURIComponent(card.id)}`); }} aria-label={`View ${card.title}`}>
-          <img src={card.thumbnailUrl} alt={card.title} loading="lazy" />
-          <span>{card.title}</span>
-        </button>)}
+        {cards.map((card) => <article className={styles.card} key={card.id}>
+          <button className={styles.cardView} type="button" onClick={() => { setFormMessage(""); setActiveId(card.id); window.history.replaceState(null, "", `/photos#${encodeURIComponent(card.id)}`); }} aria-label={`Open trade inquiry for ${card.title}`}>
+            <img src={card.thumbnailUrl} alt={card.title} loading="lazy" />
+          </button>
+          {canManage && <button type="button" className={styles.cardDelete} onClick={() => void deleteCard(card)} aria-label={`Delete ${card.title}`} title="Delete card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3" /></svg></button>}
+        </article>)}
       </div> : <div className={styles.empty}>
         {canManage ? <><span className={styles.emptyMark} aria-hidden="true">✳</span><h2>Your collection is ready.</h2><p>Add card photos or a PDF above. Each PDF page becomes a separate card.</p></> : <><span className={styles.emptyMark} aria-hidden="true">✳</span><h2>Cards are being added.</h2><p>The collection will appear here as cards are added.</p></>}
       </div>}
@@ -301,27 +278,21 @@ export function TradingCollection() {
       {inquiries.length ? inquiries.map((item) => <article key={item.id} className={styles.inquiry}><div><strong>{item.name}</strong> · <a href={`mailto:${item.email}`}>{item.email}</a><time>{new Date(item.created_at).toLocaleString()}</time></div><h3>{item.card_title}</h3><p>{item.message}</p></article>) : <p className={styles.inboxEmpty}>No inquiries yet.</p>}
     </section>}
 
-    {active && <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label={active.title} onMouseDown={(event) => { if (event.target === event.currentTarget) closeCard(); }}>
-      <button type="button" className={styles.close} onClick={closeCard} aria-label="Close card details">×</button>
+    {active && <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label="Trade inquiry" onMouseDown={(event) => { if (event.target === event.currentTarget) closeCard(); }}>
+      <button type="button" className={styles.close} onClick={closeCard} aria-label="Close trade inquiry">×</button>
       <div className={styles.detailLayout}>
         <div className={styles.detailImage}><img src={active.imageUrl} alt={active.title} /></div>
         <div className={styles.detailText}>
-          {editing ? <form className={styles.editForm} onSubmit={saveCard}><h2>EDIT CARD</h2><label>Card name<input required maxLength={160} value={editTitle} onChange={(event) => setEditTitle(event.currentTarget.value)} /></label><label>Description<textarea maxLength={3000} rows={7} value={editDescription} onChange={(event) => setEditDescription(event.currentTarget.value)} /></label><button type="submit">SAVE CARD</button><button type="button" className={styles.secondaryButton} onClick={() => setEditing(false)}>CANCEL</button>{ownerMessage && <p role="status">{ownerMessage}</p>}</form> : <>
-            <p className={styles.cardDescription}>{active.description || "No additional details yet."}</p>
-            {!inquireOpen ? <button className={styles.inquireButton} type="button" onClick={() => { setInquireOpen(true); setFormMessage(""); }}>INQUIRE ABOUT THIS TRADE</button> : <form className={styles.inquiryForm} onSubmit={sendInquiry}>
+            <form className={styles.inquiryForm} onSubmit={sendInquiry}>
               <h3>TRADE INQUIRY</h3>
-              <p>Asking about: <strong>{active.title}</strong></p>
               <label>Your name<input name="name" required maxLength={80} autoComplete="name" /></label>
               <label>Your email<input name="email" required type="email" maxLength={320} autoComplete="email" /></label>
               <label>What would you like to trade?<textarea name="message" required maxLength={3000} rows={4} placeholder="Tell me what card or cards you have in mind." /></label>
               <label className={styles.honeypot} aria-hidden="true">Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
               <small>Your email is only used to reply to this trade inquiry. It won’t be used for promotions.</small>
               <button type="submit" disabled={formBusy}>{formBusy ? "SENDING…" : "SEND INQUIRY"}</button>
-              <button type="button" className={styles.secondaryButton} onClick={() => setInquireOpen(false)}>CANCEL</button>
               {formMessage && <p className={styles.status} role="status">{formMessage}</p>}
-            </form>}
-            {canManage && <div className={styles.ownerTools}><button type="button" onClick={() => { setEditing(true); setInquireOpen(false); }}>EDIT DETAILS</button><button type="button" className={styles.removeButton} onClick={() => void deleteCard()}>REMOVE CARD</button>{ownerMessage && <p role="status">{ownerMessage}</p>}</div>}
-          </>}
+            </form>
         </div>
       </div>
     </div>}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import styles from "./QuoteStack.module.css";
 
 const quotes = [
@@ -81,6 +81,8 @@ const quotes = [
 ];
 
 const DECK_KEY = "perkrucible:quote-stack:unused-quotes:v2";
+const longestQuoteIndex = quotes.reduce((longest, quote, index) => quote.length > quotes[longest].length ? index : longest, 0);
+type QuotePosition = { left: number; top: number };
 
 function shuffledIndices() {
   const result = quotes.map((_, index) => index);
@@ -108,7 +110,7 @@ function drawQuotes(count: number) {
   return selected;
 }
 
-export function QuoteStack() {
+export function QuoteStack({ positions }: { positions: QuotePosition[] }) {
   const [indices, setIndices] = useState([0, 1, 2]);
   const [visible, setVisible] = useState([false, false, false]);
   const indicesRef = useRef(indices);
@@ -180,7 +182,9 @@ export function QuoteStack() {
             key={slot}
             className={`${styles.quote} ${visible[slot] ? styles.visible : ""}`}
             data-slot={slot}
+            style={{ "--quote-left": `${positions[slot].left}%`, "--quote-top": `${positions[slot].top}%` } as CSSProperties}
           >
+            <span className={styles.longestMeasure} aria-hidden="true">“{quotes[longestQuoteIndex]}”</span>
             <blockquote>“{quotes[index]}”</blockquote>
           </div>
         ))}

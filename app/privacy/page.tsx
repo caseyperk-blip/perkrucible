@@ -5,12 +5,19 @@ export default function PrivacyPage() {
   return <main className={styles.page}>
     <article className={styles.policy}>
       <h1>Privacy policy</h1>
-      <p className={styles.updated}>Last updated November 1, 2026</p>
+      <p className={styles.updated}>Last updated November 5, 2026</p>
 
       <section>
         <h2>What this site stores in your browser</h2>
         <p>Many of Perkrucible’s interactive tools save working data directly in your browser using local storage or IndexedDB. Depending on the feature, this can include game progress and preferences, layout choices, and information you enter into personal tools. Data saved by these tools normally stays in the browser profile on your device. Some separate features send specific information to the site’s database, as described below.</p>
         <p>Browser data can be removed through your browser’s site-data settings. Doing so may erase saved progress or tool data. Private browsing, storage limits, or browser settings can also prevent data from being saved.</p>
+      </section>
+
+      <section>
+        <h2>Trading card inquiries</h2>
+        <p>If you submit a trade inquiry, the site collects the name and email address you enter, the card you ask about, and your message. The inquiry is saved in the site database so the site owner can review and reply through a private owner-only inbox. Inquiries are not displayed publicly. They remain in the database until removed by the site owner.</p>
+        <p>If email notifications are configured, the inquiry details are sent to Resend to deliver a notification to the site owner. Your email address is used as the reply-to address so the owner can respond. It is not used for promotional email. Email delivery may not be available at all times; the inquiry is still saved for the owner to review.</p>
+        <p>A one-way hash derived from your network address is stored with the inquiry to limit repeated submissions. The raw address is not stored in the inquiry record. Please do not include sensitive personal information in your message. For questions or a request about an inquiry you submitted, contact <a href="mailto:caseykperk@gmail.com">caseykperk@gmail.com</a>.</p>
       </section>
 
       <section>
