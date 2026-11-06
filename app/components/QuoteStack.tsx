@@ -80,16 +80,32 @@ const quotes = [
   "There are two kinds of people in this world: those who drink, and those who make the rest of us want to drink.",
 ];
 
-const LAST_SELECTION_KEY = "perkrucible:quote-stack:last-selection:v1";
+const DECK_KEY = "perkrucible:quote-stack:unused-quotes:v2";
 
-function chooseRandomIndices(excluded: number[] = []) {
-  const excludedSet = new Set(excluded);
-  const available = quotes.map((_, index) => index).filter((index) => !excludedSet.has(index));
-  for (let index = available.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    [available[index], available[swapIndex]] = [available[swapIndex], available[index]];
+function shuffledIndices() {
+  const result = quotes.map((_, index) => index);
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swap]] = [result[swap], result[index]];
   }
-  return available.slice(0, 3);
+  return result;
+}
+
+function drawQuotes(count: number) {
+  let deck: number[] = [];
+  try {
+    const saved = window.localStorage.getItem(DECK_KEY);
+    const parsed = saved ? JSON.parse(saved) as unknown : null;
+    if (Array.isArray(parsed) && parsed.every((item) => Number.isInteger(item) && item >= 0 && item < quotes.length)) deck = parsed;
+  } catch { /* Start a fresh cycle if browser storage is unavailable. */ }
+  if (!deck.length) deck = shuffledIndices();
+  const selected: number[] = [];
+  while (selected.length < count) {
+    if (!deck.length) deck = shuffledIndices();
+    selected.push(deck.pop()!);
+  }
+  try { window.localStorage.setItem(DECK_KEY, JSON.stringify(deck)); } catch { /* Quotes still rotate in memory. */ }
+  return selected;
 }
 
 export function QuoteStack() {
@@ -101,22 +117,10 @@ export function QuoteStack() {
     let disposed = false;
     const timers = new Set<number>();
     const selectFreshQuotes = () => {
-      let previous: number[] = [];
-      try {
-        const saved = window.sessionStorage.getItem(LAST_SELECTION_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved) as unknown;
-          if (Array.isArray(parsed) && parsed.every((value) => Number.isInteger(value))) previous = parsed;
-        }
-      } catch { /* Random selection still works if session storage is unavailable. */ }
-
-      const selected = chooseRandomIndices(previous);
+      const selected = drawQuotes(3);
       indicesRef.current = selected;
       setIndices(selected);
       setVisible([true, true, true]);
-      try {
-        window.sessionStorage.setItem(LAST_SELECTION_KEY, JSON.stringify(selected));
-      } catch { /* The quotes remain random for this page view. */ }
     };
     const later = (callback: () => void, delay: number) => {
       const timer = window.setTimeout(() => {
@@ -131,9 +135,7 @@ export function QuoteStack() {
       setVisible((current) => current.map((shown, index) => index === slot ? false : shown));
       later(() => {
         const current = indicesRef.current;
-        const unavailable = new Set(current);
-        const choices = quotes.map((_, index) => index).filter((index) => !unavailable.has(index));
-        const next = choices[Math.floor(Math.random() * choices.length)];
+        const next = drawQuotes(1)[0];
         const updated = current.map((value, index) => index === slot ? next : value);
         indicesRef.current = updated;
         setIndices(updated);

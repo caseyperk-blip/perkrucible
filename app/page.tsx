@@ -6,13 +6,14 @@ import { QuoteStack } from "./components/QuoteStack";
 import { OdysseyTicker } from "./components/OdysseyTicker";
 import { TypingText } from "./components/TypingText";
 import { AdjustableHeroArt } from "./components/AdjustableHeroArt";
-import { TileArtPoll } from "./components/TileArtPoll";
+import { PhotoTicker } from "./components/PhotoTicker";
 import styles from "./page.module.css";
 
 const areas = [
-  { title: "Cocktail Cabinet", code: "3 / MIXED MATERIALS", href: "/cocktail-cabinet", tone: "cocktail", image: "/images/cocktail-cabinet-card.png", note: "Recipes and other arrangements." },
-  { title: "Rabbit Hole Generator", code: "6 / UNSOLICITED KNOWLEDGE", href: "/rabbit-hole-generator", tone: "rabbit", image: "/images/rabbit-hole-generator-card.png", note: "" },
-  { title: "Milk", code: "1 / ADDITIONAL MATERIAL", href: "/milk", tone: "milk", image: "/images/milk-card-vintage-warm.png", note: "" },
+  { title: "Guestbook", href: "/guestbook", image: "/images/covers/guestbook-tile.png" },
+  { title: "Cocktail Cabinet", href: "/cocktail-cabinet", image: "/images/covers/cocktail-cabinet-tile.png" },
+  { title: "Rabbit Hole Generator", href: "/rabbit-hole-generator", image: "/images/covers/rabbit-hole-tile.png" },
+  { title: "Milk", href: "/milk", image: "/images/covers/milk-tile.png" },
 ];
 
 export default function HomePage() {
@@ -61,26 +62,19 @@ export default function HomePage() {
           </div>
           <QuoteStack />
         </div>
+        <button className={styles.keepScrolling} type="button" onClick={() => document.getElementById("current-materials")?.scrollIntoView({ behavior: "smooth" })} aria-label="Scroll down to current materials">
+          Keep scrolling. I pay for the whole page.
+        </button>
         <OdysseyTicker />
       </section>
 
-      <section className={styles.content} aria-label="Current materials">
-        <TileArtPoll />
-        <div className={styles.sectionHeading}>
-          <span className={styles.eyebrow}>CURRENT MATERIALS / 03</span>
-        </div>
+      <section id="current-materials" className={styles.content} aria-label="Explore the archive">
+        <PhotoTicker />
         <div className={styles.areaGrid}>
           {areas.map((area) => (
-            <Link key={area.href} href={area.href} className={`${styles.areaCard} ${styles[area.tone]}`}>
-              <span className={styles.cardArt} aria-hidden="true" style={area.image ? { backgroundImage: `url("${area.image}")` } : undefined}>
-                <span className={styles.artLabel}>{area.code}</span>
-                {!area.image && <span className={styles.artPending}>VISUAL MATERIAL PENDING</span>}
-              </span>
-              <span className={styles.cardCopy}>
-                <span className={styles.cardTitle}>{area.title}</span>
-                {area.note && <span className={styles.cardNote}>{area.note}</span>}
-                <span className={styles.cardEnter}>OPEN PAGE ↗</span>
-              </span>
+            <Link key={area.href} href={area.href} aria-label={area.title} className={styles.areaCard}>
+              <span className={styles.cardArt} aria-hidden="true" style={{ backgroundImage: `url("${area.image}")` }} />
+              <span className={styles.cardLabel}>{area.title}</span>
             </Link>
           ))}
         </div>

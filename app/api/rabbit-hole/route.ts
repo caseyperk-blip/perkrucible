@@ -7,12 +7,12 @@ type Topic = { title: string; subject: string; description: string; image: strin
 type Summary = { title?: string; extract?: string; thumbnail?: { source?: string }; originalimage?: { source?: string }; content_urls?: { desktop?: { page?: string } }; type?: string };
 
 const slots: Slot[] = [
-  { subject: "HISTORY", seeds: ["Ancient Greece", "Dancing plague of 1518", "Mithridates VI Eupator", "Bronze Age collapse"] },
-  { subject: "PHILOSOPHY", seeds: ["Trolley problem", "Ship of Theseus", "Chinese room", "Experience machine"] },
-  { subject: "PSYCHOLOGY", seeds: ["Capgras delusion", "Cotard delusion", "Stroop effect", "False memory"] },
-  { subject: "SCIENCE", seeds: ["Transient lunar phenomenon", "Rogue planet", "Deep sea gigantism", "Magnetoreception"] },
-  { subject: "SCIENCE", seeds: ["Ball lightning", "Wow! signal", "Bloop", "Bioluminescence"] },
-  { subject: "STRANGE MYSTERIES", seeds: ["Taos Hum", "Mary Celeste", "Voynich manuscript", "Dyatlov Pass incident"] },
+  { subject: "HISTORY", seeds: ["Ancient Greece", "Dancing plague of 1518", "Mithridates VI Eupator", "Bronze Age collapse", "Antikythera mechanism", "Library of Alexandria", "Green Children of Woolpit", "Great Molasses Flood", "Sea Peoples", "Roman concrete", "Year Without a Summer", "Tarrare"] },
+  { subject: "PHILOSOPHY", seeds: ["Trolley problem", "Ship of Theseus", "Chinese room", "Experience machine", "Plato's cave", "Sorites paradox", "Fermi paradox", "Simulation hypothesis", "Omnipotence paradox", "Brain in a vat", "Veil of ignorance", "Problem of induction"] },
+  { subject: "PSYCHOLOGY", seeds: ["Capgras delusion", "Cotard delusion", "Stroop effect", "False memory", "Jam experiment", "Dunning–Kruger effect", "Baader–Meinhof phenomenon", "Zeigarnik effect", "Placebo effect", "Bystander effect", "Inattentional blindness", "Pavlovian conditioning"] },
+  { subject: "SCIENCE", seeds: ["Transient lunar phenomenon", "Rogue planet", "Deep sea gigantism", "Magnetoreception", "Ferrofluid", "Catatumbo lightning", "Tardigrade", "Kessler syndrome", "Quantum tunnelling", "Ice volcano", "Fulgurite", "Chladni figures"] },
+  { subject: "SCIENCE", seeds: ["Ball lightning", "Wow! signal", "Bloop", "Bioluminescence", "Tabby's Star", "Oumuamua", "Radioactive decay", "Sailing stones", "Blood Falls", "Brinicle", "Lake Nyos disaster", "Lunar swirls"] },
+  { subject: "STRANGE MYSTERIES", seeds: ["Taos Hum", "Mary Celeste", "Voynich manuscript", "Dyatlov Pass incident", "Dighton Rock", "Dancing mania", "Oak Island mystery", "Disappearance of Frederick Valentich", "Cicada 3301", "Flannan Isles Lighthouse", "Max Headroom signal hijacking", "Green flash"] },
 ];
 
 function shuffled<T>(values: T[]) {
@@ -32,14 +32,14 @@ function todayInDenver() {
 
 async function topicFromSlot(slot: Slot, used: Set<string>, recent: Set<string>): Promise<Topic> {
   const seeds = shuffled(slot.seeds);
-  for (const seed of seeds) {
+  for (const allowRecent of [false, true]) for (const seed of seeds) {
     const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(seed.replaceAll(" ", "_"))}`, { headers: { "User-Agent": "PerkruciblePersonalArchive/1.0 (topic discovery page)" } });
     if (!response.ok) continue;
     const summary = await response.json() as Summary;
     const image = summary.originalimage?.source ?? summary.thumbnail?.source;
     if (summary.type === "disambiguation" || !summary.extract || !image || !summary.content_urls?.desktop?.page) continue;
     const normalizedTitle = (summary.title ?? seed).toLowerCase();
-    if (used.has(normalizedTitle) || recent.has(normalizedTitle)) continue;
+    if (used.has(normalizedTitle) || (!allowRecent && recent.has(normalizedTitle))) continue;
     used.add(normalizedTitle);
     const extract = summary.extract.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ");
     return {
@@ -77,8 +77,7 @@ export async function GET(request: Request) {
     ];
     const recent = new Set(recentTitles);
     const used = new Set<string>();
-    const topics: Topic[] = [];
-    for (const slot of slots) topics.push(await topicFromSlot(slot, used, recent));
+    const topics = await Promise.all(slots.map((slot) => topicFromSlot(slot, used, recent)));
 
     await sql`INSERT INTO rabbit_hole_daily_sets (date_key, topics) VALUES (${dateKey}, ${JSON.stringify(topics)}::jsonb) ON CONFLICT (date_key) DO UPDATE SET topics = EXCLUDED.topics, created_at = NOW()`;
     const final = await sql`SELECT topics FROM rabbit_hole_daily_sets WHERE date_key = ${dateKey} LIMIT 1` as Array<{ topics: unknown }>;

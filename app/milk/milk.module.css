@@ -1,7 +1,7 @@
 .page { min-height: 75vh; position: relative; overflow-x: hidden; background: #191a1c; color: #ddd; }
 .pattern { display: none; }
 .nav { display: none; }
-.archive { position: relative; z-index: 1; width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: clamp(72px, 10vw, 126px) 0 110px; border: 0; background: transparent; box-shadow: none; }
+.archive { position: relative; z-index: 1; width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: clamp(120px, 12vw, 154px) 0 72px; border: 0; background: transparent; box-shadow: none; }
 .archive::before,.archive::after { display: none; }
 .corner,.tl,.tr,.bl,.br { display: none; }
 .header { position: relative; text-align: center; margin-bottom: 62px; }
@@ -38,7 +38,7 @@
 .entries article p a:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,.5); }
 @keyframes milkJitter { 0%,77%,100%{transform:translateX(0)} 78%{transform:translateX(.8px)} 79%{transform:translateX(-.8px)} 81%{transform:translateX(.4px)} 82%{transform:translateX(0)} }
 @media(max-width:760px) {
-  .archive { width: calc(100% - 38px); padding-top: 68px; }
+  .archive { width: calc(100% - 38px); padding-top: 112px; }
   .section>header { display: grid; }
   .section>header button { justify-self: start; }
   .header { margin-bottom: 42px; }

@@ -25,7 +25,12 @@ export function OdysseyTicker() {
   useEffect(() => {
     if (!text || !textRef.current) return;
     const measure = () => {
-      if (textRef.current) setDuration(Math.max(45, textRef.current.scrollWidth / 49));
+      if (textRef.current) {
+        const nextDuration = Math.max(45, textRef.current.scrollWidth / 49);
+        setDuration(nextDuration);
+        document.documentElement.style.setProperty("--odyssey-scroll-speed", `${textRef.current.scrollWidth / nextDuration}px`);
+        window.dispatchEvent(new Event("odyssey-scroll-speed-change"));
+      }
     };
     measure();
     const observer = new ResizeObserver(measure);

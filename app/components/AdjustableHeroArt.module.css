@@ -17,8 +17,15 @@
 }
 
 .object.savedObject { width: var(--saved-width); }
+.object:active { cursor: grabbing !important; }
 
 .object img { display: block; width: 100%; height: auto; pointer-events: none; }
+.controls { position: absolute; z-index: 6; right: 12px; bottom: 88px; display: flex; align-items: center; gap: 8px; pointer-events: auto; opacity: .8; transition: opacity 180ms ease; }
+.controls:hover,.controls:focus-within { opacity: 1; }
+.controls button,.controls label { padding: 7px 9px; border: 1px solid rgba(255,255,255,.5); background: rgba(7,8,10,.82); color: #fff; font: 7px/1.2 var(--font-geist-mono),monospace; letter-spacing: .1em; cursor: pointer; }
+.controls label { display: inline-flex; align-items: center; gap: 8px; }
+.controls input { width: 92px; }
+.controls button:hover { border-color: #ffc27a; color: #eadbff; }
 
 @media (max-width: 900px) {
   .object { right: -46px; width: min(42vw, 300px); }
@@ -28,4 +35,7 @@
 @media (max-width: 620px) {
   .object { right: -42px; width: min(48vw, 225px); }
   .object.savedObject { width: min(var(--saved-width), 48vw); }
+  .controls { display: none; }
+  .controls button,.controls label { padding: 6px; font-size: 6px; }
+  .controls input { width: 58px; }
 }

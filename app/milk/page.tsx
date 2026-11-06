@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { TypingText } from "../components/TypingText";
 import styles from "./milk.module.css";
 
 type Entry = { id: string; title: string; body: string; createdAt: string };
@@ -93,9 +92,7 @@ export default function MilkPage() {
   return (
     <main className={styles.page}>
       <section className={styles.archive}>
-        <header className={styles.header}>
-          <h1><TypingText text="Milk" /></h1>
-        </header>
+        <h1 className="visually-hidden">Milk</h1>
         {loadError && <p className={styles.empty}>{loadError}</p>}
         <div className={styles.sections}>
           {sections.map((section) => <section className={styles.section} key={section.id}>

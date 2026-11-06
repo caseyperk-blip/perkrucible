@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
 import styles from "./AccessPopup.module.css";
 
-export function AccessPopup() {
+export function AccessPopup({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState("");
@@ -31,16 +31,29 @@ export function AccessPopup() {
     setBusy(true);
     setMessage("");
     try {
-      const result = await authClient.signIn.email({ email, password, callbackURL: "/milk" });
+      const destination = window.location.pathname === "/photos" ? "/photos" : "/milk";
+      const result = await authClient.signIn.email({ email, password, callbackURL: destination });
       if (result.error) {
         setMessage(result.error.message || "Login failed. Check your details and try again.");
         return;
       }
       setOpen(false);
-      router.push("/milk");
+      window.dispatchEvent(new Event("perkrucible-session-change"));
+      router.push(destination);
       router.refresh();
     } catch {
       setMessage("Login failed. Check your details and try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const signOut = async () => {
+    setBusy(true);
+    try {
+      await authClient.signOut();
+      window.dispatchEvent(new Event("perkrucible-session-change"));
+      router.refresh();
     } finally {
       setBusy(false);
     }
@@ -66,7 +79,10 @@ export function AccessPopup() {
 
   return (
     <>
-      <button className={styles.accessButton} type="button" onClick={() => { setMessage(""); setOpen(true); }}>Shadow Society Access</button>
+      <div className={styles.accessActions}>
+        <button className={styles.accessButton} type="button" aria-label="Login" title="Login" onClick={() => { setMessage(""); setOpen(true); }}><img src="/images/login-avatar-mark.png" alt="" /></button>
+        {isLoggedIn && <button className={styles.logoutButton} type="button" onClick={() => void signOut()} disabled={busy}>{busy ? "Signing out…" : "Log out"}</button>}
+      </div>
       {mounted && open && createPortal(
         <div className={styles.backdrop} onClick={() => setOpen(false)}>
           <section className={styles.dialog} role="dialog" aria-modal="true" aria-label="Sign in" onClick={(event) => event.stopPropagation()}>

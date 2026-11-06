@@ -1,0 +1,10 @@
+.page { min-height: 100vh; padding: 110px 22px 70px; color: #f2eee9; background: radial-gradient(ellipse at 50% 10%,#242225,#111214 68%); }
+.policy { width: min(100%,780px); margin: 0 auto; padding: clamp(22px,5vw,48px); border: 1px solid rgba(255,255,255,.17); background: rgba(9,9,11,.62); }
+.updated { color: #b7afb7; font: 8px/1.6 var(--font-geist-mono),monospace; letter-spacing: .12em; }
+.policy h1 { margin: 0; color: #faf6f2; font: 400 clamp(38px,7vw,62px)/1 Georgia,"Times New Roman",serif; }
+.updated { margin: 10px 0 30px; font-size: 7px; }
+.policy section { padding: 17px 0; border-top: 1px solid rgba(255,255,255,.12); }
+.policy h2 { margin: 0 0 9px; color: #f2eee9; font: 400 21px/1.25 Georgia,"Times New Roman",serif; }
+.policy section p { margin: 7px 0 0; color: #c9c3c6; font: 14px/1.65 Georgia,"Times New Roman",serif; }
+.policy section a { color: #eee3ff; text-underline-offset: 3px; }
+@media (max-width:620px) { .page { padding: 80px 12px 45px; } .policy { padding: 21px 17px; } .policy h2 { font-size: 19px; } .policy section p { font-size: 13px; } }

@@ -11,3 +11,5 @@ export async function isMilkOwner() {
   const ownerEmail = process.env.MILK_OWNER_EMAIL?.trim().toLowerCase();
   return Boolean(ownerEmail && session?.user?.email?.toLowerCase() === ownerEmail);
 }
+
+export const isCollectionOwner = isMilkOwner;

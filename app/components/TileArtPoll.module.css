@@ -24,11 +24,11 @@
   text-underline-offset: 2px;
 }
 .option:disabled { opacity: .75; }
-.option.selected { color: #ffc57a; }
+.option.selected { color: #eadbff; }
 .check { display: inline-grid; width: 12px; height: 12px; place-items: center; border: 1px solid rgba(245,237,244,.72); border-radius: 50%; color: #191a1c; font: 8px/1 Arial,sans-serif; text-shadow: none; }
 .selected .check { border-color: #ffc57a; background: #ffc57a; }
 .count { margin-left: 3px; color: rgba(255,255,255,.48); font-size: 8px; text-decoration: none; }
-.thanks { display: block; margin-top: 3px; color: rgba(255, 197, 122, .7); font-size: 7px; }
+.thanks { display: block; margin-top: 3px; color: rgba(234, 219, 255, .8); font-size: 7px; }
 .reset { margin-top: 4px; padding: 0; border: 0; background: transparent; color: rgba(245,237,244,.35); font: 6px/1.4 var(--font-geist-mono),monospace; letter-spacing: .08em; }
 
 @media (max-width: 620px) { .poll { margin-bottom: 20px; } }

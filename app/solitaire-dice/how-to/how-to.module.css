@@ -1,0 +1,11 @@
+.page { width: min(820px,calc(100% - 32px)); min-height: 100dvh; margin: 0 auto; padding: max(118px,env(safe-area-inset-top)) 0 max(32px,env(safe-area-inset-bottom)); color: #f4edf0; }
+.back { display: inline-block; margin-bottom: 24px; color: #d9c5ae; font: 9px/1.5 var(--font-geist-mono),monospace; letter-spacing: .12em; text-decoration: none; }
+.back:hover { color: #eadbff; }
+.page h1 { margin: 0 0 22px; color: #fff7ed; font: 400 clamp(34px,7vw,58px)/1 Georgia,"Times New Roman",serif; }
+.steps { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li { position: relative; padding: 13px 15px 13px 52px; border: 1px solid rgba(232,220,207,.16); background: rgba(255,255,255,.025); counter-increment: step; }
+.steps li::before { position: absolute; top: 13px; left: 16px; color: #eadbff; content: counter(step,"0"); font: 10px/1.5 var(--font-geist-mono),monospace; }
+.steps b { color: #f4e5d4; font: 11px/1.5 var(--font-geist-mono),monospace; letter-spacing: .07em; text-transform: uppercase; }
+.steps p { margin: 4px 0 0; color: #c7bdc0; font: 14px/1.5 Georgia,"Times New Roman",serif; }
+.diceLink { display: inline-block; margin-top: 18px; padding: 11px 14px; border: 1px solid rgba(241,226,209,.3); color: #e8d8c8; font: 8px/1.5 var(--font-geist-mono),monospace; letter-spacing: .11em; text-decoration: none; }
+.diceLink:hover { border-color: #dcaa76; color: #eadbff; }

@@ -6,14 +6,14 @@
   left: 0;
   height: 34px;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 118, 49, .54);
+  border-top: 1px solid rgba(221, 207, 247, .34);
   background: rgba(5, 6, 8, .93);
-  color: #e9783b;
+  color: #f2eaff;
   display: flex;
   align-items: center;
   font: 10px/1 var(--font-geist-mono), monospace;
   letter-spacing: .045em;
-  text-shadow: 0 0 7px rgba(235, 99, 35, .4);
+  text-shadow: 0 0 7px rgba(206, 183, 245, .2);
 }
 
 .track {

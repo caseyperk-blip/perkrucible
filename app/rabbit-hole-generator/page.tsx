@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { TypingText } from "../components/TypingText";
 import styles from "./rabbit-hole.module.css";
 
 type Topic = { title: string; subject: string; description: string; image: string; url: string };
@@ -34,9 +33,7 @@ export default function Page() {
 
   return (
     <main className={styles.page}>
-      <header className={styles.heading}>
-        <h1><TypingText text="Rabbit Hole Generator" /></h1>
-      </header>
+      <h1 className="visually-hidden">Rabbit Hole Generator</h1>
       {loading && <p className={styles.status}>LOCATING SIX RANDOM TOPICS...</p>}
       {error && <div className={styles.error}><p>The archive did not answer. {error}</p><button type="button" onClick={() => void loadTopics()}>TRY AGAIN ↻</button></div>}
       {!loading && topics.length > 0 && (
