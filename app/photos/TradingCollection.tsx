@@ -177,7 +177,7 @@ export function TradingCollection() {
           const responseText = await response.text();
           let data: { error?: string; card?: TradingCard } = {};
           try { data = JSON.parse(responseText) as typeof data; } catch { /* Use the status fallback below. */ }
-          if (!response.ok) throw new Error(data.error || `Could not save ${card.title}.`);
+          if (!response.ok) throw new Error(data.error || `Could not save ${card.title} (HTTP ${response.status}).`);
           const savedCard = data.card;
           if (!savedCard) throw new Error(`The server did not return the saved card (${response.status}).`);
           saved += 1;
