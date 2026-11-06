@@ -6,6 +6,9 @@ import styles from "./photos.module.css";
 
 type Inquiry = { id: string; name: string; email: string; card_title: string; message: string; created_at: string };
 type PreparedCard = { title: string; image: Blob; thumbnail: Blob };
+const MAX_CARD_REQUEST_BYTES = 3_800_000;
+const MAX_CARD_IMAGE_BYTES = 3_550_000;
+const MAX_CARD_THUMBNAIL_BYTES = 250_000;
 
 function fileTitle(name: string) {
   return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim().slice(0, 145) || "Trading card";
@@ -16,19 +19,33 @@ function canvasBlob(canvas: HTMLCanvasElement, quality: number) {
 }
 
 async function imageBlobs(source: CanvasImageSource, width: number, height: number): Promise<{ image: Blob; thumbnail: Blob }> {
-  const maxEdge = 2000;
-  const ratio = Math.min(1, maxEdge / Math.max(width, height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.round(width * ratio));
-  canvas.height = Math.max(1, Math.round(height * ratio));
-  canvas.getContext("2d")!.drawImage(source, 0, 0, canvas.width, canvas.height);
-  const image = await canvasBlob(canvas, 0.88);
-  const thumbCanvas = document.createElement("canvas");
-  const thumbRatio = Math.min(1, 440 / Math.max(canvas.width, canvas.height));
-  thumbCanvas.width = Math.max(1, Math.round(canvas.width * thumbRatio));
-  thumbCanvas.height = Math.max(1, Math.round(canvas.height * thumbRatio));
-  thumbCanvas.getContext("2d")!.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
-  return { image, thumbnail: await canvasBlob(thumbCanvas, 0.72) };
+  for (const maxEdge of [2000, 1800, 1600, 1400, 1200, 1000]) {
+    const ratio = Math.min(1, maxEdge / Math.max(width, height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(width * ratio));
+    canvas.height = Math.max(1, Math.round(height * ratio));
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("This browser could not prepare the card image.");
+    context.drawImage(source, 0, 0, canvas.width, canvas.height);
+
+    const thumbCanvas = document.createElement("canvas");
+    const thumbRatio = Math.min(1, 440 / Math.max(canvas.width, canvas.height));
+    thumbCanvas.width = Math.max(1, Math.round(canvas.width * thumbRatio));
+    thumbCanvas.height = Math.max(1, Math.round(canvas.height * thumbRatio));
+    const thumbContext = thumbCanvas.getContext("2d");
+    if (!thumbContext) throw new Error("This browser could not prepare the card thumbnail.");
+    thumbContext.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
+
+    const thumbnail = await canvasBlob(thumbCanvas, 0.68);
+    if (thumbnail.size > MAX_CARD_THUMBNAIL_BYTES) continue;
+    for (const quality of [0.86, 0.8, 0.74, 0.68, 0.62]) {
+      const image = await canvasBlob(canvas, quality);
+      if (image.size <= MAX_CARD_IMAGE_BYTES && image.size + thumbnail.size <= MAX_CARD_REQUEST_BYTES) {
+        return { image, thumbnail };
+      }
+    }
+  }
+  throw new Error("This card could not be reduced enough to upload safely. Try a lower-resolution scan or a smaller image.");
 }
 
 async function prepareImage(file: File): Promise<PreparedCard[]> {
@@ -59,13 +76,8 @@ async function preparePdf(file: File, onPage: (page: number, total: number) => v
       const context = canvas.getContext("2d", { alpha: false });
       if (!context) throw new Error("This browser could not prepare a PDF page.");
       await page.render({ canvas, canvasContext: context, viewport }).promise;
-      const image = await canvasBlob(canvas, 0.88);
-      const thumbnailCanvas = window.document.createElement("canvas");
-      const ratio = Math.min(1, 440 / Math.max(canvas.width, canvas.height));
-      thumbnailCanvas.width = Math.max(1, Math.round(canvas.width * ratio));
-      thumbnailCanvas.height = Math.max(1, Math.round(canvas.height * ratio));
-      thumbnailCanvas.getContext("2d")!.drawImage(canvas, 0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
-      cards.push({ title: `${fileTitle(file.name)} · ${pageNumber}`, image, thumbnail: await canvasBlob(thumbnailCanvas, 0.72) });
+      const images = await imageBlobs(canvas, canvas.width, canvas.height);
+      cards.push({ title: `${fileTitle(file.name)} · ${pageNumber}`, ...images });
       page.cleanup();
     }
     return cards;
@@ -177,7 +189,12 @@ export function TradingCollection() {
           const responseText = await response.text();
           let data: { error?: string; card?: TradingCard } = {};
           try { data = JSON.parse(responseText) as typeof data; } catch { /* Use the status fallback below. */ }
-          if (!response.ok) throw new Error(data.error || `Could not save ${card.title} (HTTP ${response.status}).`);
+          if (!response.ok) {
+            const message = response.status === 413
+              ? "The host rejected this card because its upload request was too large (HTTP 413). The card was not added."
+              : `Could not save this card (HTTP ${response.status}).`;
+            throw new Error(data.error ? `${data.error} (HTTP ${response.status})` : message);
+          }
           const savedCard = data.card;
           if (!savedCard) throw new Error(`The server did not return the saved card (${response.status}).`);
           saved += 1;
