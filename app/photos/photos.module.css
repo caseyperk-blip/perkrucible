@@ -1,7 +1,6 @@
 .page { min-height: 100vh; padding: clamp(128px,16vh,190px) max(20px,calc((100vw - 1460px)/2)) 96px; color: #f4edf0; background: radial-gradient(ellipse at 50% 10%,#28252a,#17181a 56%,#101113); }
 .header { margin: 0 auto 38px; text-align: center; }
-.titleRow { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 16px; }
-.header h1 { max-width: 1100px; margin: 0; color: #fff5ef; font: 400 clamp(36px,6vw,76px)/1.05 Georgia,serif; letter-spacing: -.045em; }
+.titleRow { display: flex; align-items: baseline; justify-content: flex-start; flex-wrap: wrap; gap: 4px 16px; }
 .headerCount { color: #d7baa0; font: 11px/1.4 var(--font-geist-mono),monospace; letter-spacing: .14em; white-space: nowrap; }
 .description { max-width: 760px; margin: 16px auto 0; color: #c9c1ca; font: italic 16px/1.6 Georgia,serif; }
 .ownerPanel,.album,.inbox { border: 1px solid rgba(232,220,207,.18); background: rgba(8,8,10,.52); }

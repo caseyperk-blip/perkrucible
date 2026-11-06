@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import type { TradingCard } from "./archive";
-import { collectionTitle } from "./archive";
 import styles from "./photos.module.css";
 
 type Inquiry = { id: string; name: string; email: string; card_title: string; message: string; created_at: string };
@@ -234,7 +233,7 @@ export function TradingCollection() {
   }
 
   return <main className={styles.page}>
-    <header className={styles.header}><div className={styles.titleRow}><span className={styles.headerCount}>{cards.length} LEFT</span><h1>{collectionTitle}</h1></div>
+    <header className={styles.header}><div className={styles.titleRow}><span className={styles.headerCount}>{cards.length} LEFT</span></div>
       <p className={styles.description}>Every card shown is available to trade for a card of similar value. Select a card to see its details.</p>
     </header>
 
