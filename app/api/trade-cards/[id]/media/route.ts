@@ -11,9 +11,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const rows = variant === "thumbnail_data"
       ? await sql`SELECT thumbnail_data AS data FROM trade_cards WHERE id=${id}` as Array<{ data: string }>
       : await sql`SELECT image_data AS data FROM trade_cards WHERE id=${id}` as Array<{ data: string }>;
-    const match = rows[0]?.data.match(/^data:image\/webp;base64,([A-Za-z0-9+/=]+)$/);
+    const match = rows[0]?.data.match(/^data:(image\/(?:webp|jpeg));base64,([A-Za-z0-9+/=]+)$/);
     if (!match) return new Response(null, { status: 404 });
-    return new Response(Buffer.from(match[1], "base64"), { headers: { "Content-Type": "image/webp", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+    return new Response(Buffer.from(match[2], "base64"), { headers: { "Content-Type": match[1], "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
   } catch (error) {
     console.error("Unable to load trading card image", error);
     return new Response(null, { status: 500 });

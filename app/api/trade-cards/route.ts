@@ -31,11 +31,12 @@ export async function POST(request: Request) {
     if (!title || title.length > 160 || description.length > 3000 || !(image instanceof File) || !(thumbnail instanceof File)) {
       return Response.json({ error: "Add an image with a card name; descriptions can be up to 3,000 characters." }, { status: 400 });
     }
-    if (image.size > 4_000_000 || thumbnail.size > 500_000 || image.type !== "image/webp" || thumbnail.type !== "image/webp") {
+    const supportedImageTypes = new Set(["image/webp", "image/jpeg"]);
+    if (image.size > 4_000_000 || thumbnail.size > 500_000 || !supportedImageTypes.has(image.type) || !supportedImageTypes.has(thumbnail.type)) {
       return Response.json({ error: "The image could not be processed. Please try a smaller photo or PDF." }, { status: 413 });
     }
-    const imageData = `data:image/webp;base64,${Buffer.from(await image.arrayBuffer()).toString("base64")}`;
-    const thumbnailData = `data:image/webp;base64,${Buffer.from(await thumbnail.arrayBuffer()).toString("base64")}`;
+    const imageData = `data:${image.type};base64,${Buffer.from(await image.arrayBuffer()).toString("base64")}`;
+    const thumbnailData = `data:${thumbnail.type};base64,${Buffer.from(await thumbnail.arrayBuffer()).toString("base64")}`;
     const sql = await ensureTradingCardTables();
     const rows = await sql`INSERT INTO trade_cards (title,description,image_data,thumbnail_data) VALUES (${title},${description},${imageData},${thumbnailData}) RETURNING id,title,description,created_at` as CardRow[];
     const card = rows[0];

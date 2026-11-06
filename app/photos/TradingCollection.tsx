@@ -14,11 +14,22 @@ function fileTitle(name: string) {
   return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim().slice(0, 145) || "Trading card";
 }
 
-function canvasBlob(canvas: HTMLCanvasElement, quality: number) {
-  return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("The image could not be prepared.")), "image/webp", quality));
+function encodeCanvas(canvas: HTMLCanvasElement, type: "image/webp" | "image/jpeg", quality: number) {
+  return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("The image could not be prepared.")), type, quality));
+}
+
+async function canvasBlob(canvas: HTMLCanvasElement, quality: number) {
+  const webp = await encodeCanvas(canvas, "image/webp", quality);
+  if (webp.type === "image/webp") return webp;
+  const jpeg = await encodeCanvas(canvas, "image/jpeg", quality);
+  if (jpeg.type === "image/jpeg") return jpeg;
+  throw new Error(`The browser returned ${webp.type || "an unknown format"} instead of a compressed WebP or JPEG image.`);
 }
 
 async function imageBlobs(source: CanvasImageSource, width: number, height: number): Promise<{ image: Blob; thumbnail: Blob }> {
+  let smallestImage = Number.POSITIVE_INFINITY;
+  let smallestThumbnail = Number.POSITIVE_INFINITY;
+  let smallestImageType = "unknown";
   for (const maxEdge of [2000, 1800, 1600, 1400, 1200, 1000]) {
     const ratio = Math.min(1, maxEdge / Math.max(width, height));
     const canvas = document.createElement("canvas");
@@ -37,15 +48,22 @@ async function imageBlobs(source: CanvasImageSource, width: number, height: numb
     thumbContext.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
 
     const thumbnail = await canvasBlob(thumbCanvas, 0.68);
+    smallestThumbnail = Math.min(smallestThumbnail, thumbnail.size);
     if (thumbnail.size > MAX_CARD_THUMBNAIL_BYTES) continue;
     for (const quality of [0.86, 0.8, 0.74, 0.68, 0.62]) {
       const image = await canvasBlob(canvas, quality);
+      if (image.size < smallestImage) {
+        smallestImage = image.size;
+        smallestImageType = image.type;
+      }
       if (image.size <= MAX_CARD_IMAGE_BYTES && image.size + thumbnail.size <= MAX_CARD_REQUEST_BYTES) {
         return { image, thumbnail };
       }
     }
   }
-  throw new Error("This card could not be reduced enough to upload safely. Try a lower-resolution scan or a smaller image.");
+  const imageSize = Number.isFinite(smallestImage) ? `${(smallestImage / 1024).toFixed(0)} KB ${smallestImageType}` : "not available";
+  const thumbnailSize = Number.isFinite(smallestThumbnail) ? `${(smallestThumbnail / 1024).toFixed(0)} KB` : "not available";
+  throw new Error(`Could not reduce this card enough to upload safely (smallest image: ${imageSize}; thumbnail: ${thumbnailSize}). Try a lower-resolution scan.`);
 }
 
 async function prepareImage(file: File): Promise<PreparedCard[]> {
@@ -183,8 +201,9 @@ export function TradingCollection() {
           body.set("title", card.title);
           // Filenames are not used by the API; fixed ASCII names avoid browser
           // FormData errors when uploaded card names contain unusual characters.
-          body.set("image", card.image, "card.webp");
-          body.set("thumbnail", card.thumbnail, "thumbnail.webp");
+          const extension = card.image.type === "image/jpeg" ? "jpg" : "webp";
+          body.set("image", card.image, `card.${extension}`);
+          body.set("thumbnail", card.thumbnail, `thumbnail.${card.thumbnail.type === "image/jpeg" ? "jpg" : "webp"}`);
           const response = await fetch("/api/trade-cards", { method: "POST", body });
           const responseText = await response.text();
           let data: { error?: string; card?: TradingCard } = {};
