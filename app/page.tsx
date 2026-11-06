@@ -17,12 +17,13 @@ const areas = [
 
 const LAYOUT_KEY = "perkrucible:homepage-layout:v5";
 const PREVIOUS_LAYOUT_KEY = "perkrucible:homepage-layout:v4";
+const DEFAULT_DESKTOP_TICKER_OFFSET = 220;
 const DEFAULT_QUOTES = [{ left: 8, top: 16 }, { left: 38, top: 50 }, { left: 69, top: 18 }];
 const DEFAULT_MOBILE_QUOTES = [{ left: 5, top: 5 }, { left: 5, top: 37 }, { left: 5, top: 69 }];
 
 export default function HomePage() {
   const [heroScale, setHeroScale] = useState(1);
-  const [tickerOffset, setTickerOffset] = useState(0);
+  const [tickerOffset, setTickerOffset] = useState(DEFAULT_DESKTOP_TICKER_OFFSET);
   const [backgroundOffset, setBackgroundOffset] = useState(0);
   const [mobileTickerOffset, setMobileTickerOffset] = useState(0);
   const [mobileBackgroundOffset, setMobileBackgroundOffset] = useState(0);
@@ -36,8 +37,8 @@ export default function HomePage() {
       const saved = window.localStorage.getItem(LAYOUT_KEY) ?? window.localStorage.getItem(PREVIOUS_LAYOUT_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as { tickerOffset?: number; heroRise?: number; backgroundOffset?: number; quotePositions?: typeof DEFAULT_QUOTES; mobileTickerOffset?: number; mobileBackgroundOffset?: number; mobileQuotePositions?: typeof DEFAULT_MOBILE_QUOTES };
-        if (typeof parsed.tickerOffset === "number") setTickerOffset(Math.max(0, Math.min(220, parsed.tickerOffset)));
-        else if (typeof parsed.heroRise === "number") setTickerOffset(Math.max(0, Math.min(220, parsed.heroRise)));
+        // Keep the desktop hero spacing consistent across localhost and production.
+        // Older origin-specific saved offsets caused the live page to ignore the chosen layout.
         if (typeof parsed.backgroundOffset === "number") setBackgroundOffset(Math.max(0, Math.min(240, parsed.backgroundOffset)));
         if (typeof parsed.mobileTickerOffset === "number") setMobileTickerOffset(Math.max(0, Math.min(220, parsed.mobileTickerOffset)));
         if (typeof parsed.mobileBackgroundOffset === "number") setMobileBackgroundOffset(Math.max(0, Math.min(240, parsed.mobileBackgroundOffset)));
