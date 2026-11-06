@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { QuoteStack } from "./components/QuoteStack";
 import { OdysseyTicker } from "./components/OdysseyTicker";
-import { TypingText } from "./components/TypingText";
 import { AdjustableHeroArt } from "./components/AdjustableHeroArt";
 import { PhotoTicker } from "./components/PhotoTicker";
 import styles from "./page.module.css";
@@ -18,16 +17,6 @@ const areas = [
 
 export default function HomePage() {
   const [heroScale, setHeroScale] = useState(1);
-  const [typingRun, setTypingRun] = useState(0);
-  const [titleComplete, setTitleComplete] = useState(false);
-  const [subtitleComplete, setSubtitleComplete] = useState(false);
-
-  const replayIntroduction = () => {
-    setTypingRun((run) => run + 1);
-    setTitleComplete(false);
-    setSubtitleComplete(false);
-  };
-
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) return;
@@ -56,9 +45,8 @@ export default function HomePage() {
         <AdjustableHeroArt />
         <div className={styles.heroLayout}>
           <div className={styles.heroCopy}>
-            <h1><TypingText text="A personal archive and repository of phantasmagoric information." replayKey={typingRun} onComplete={() => setTitleComplete(true)} /></h1>
-            {titleComplete && <p><TypingText text="Your time is most likely wasted here." replayKey={typingRun} startDelay={380} onComplete={() => setSubtitleComplete(true)} /></p>}
-            {subtitleComplete && <button className={styles.replayTyping} type="button" onClick={replayIntroduction}>Type that again. I like that sound.</button>}
+            <h1>A personal archive and repository of phantasmagoric information.</h1>
+            <p>Your time is most likely wasted here.</p>
           </div>
           <QuoteStack />
         </div>

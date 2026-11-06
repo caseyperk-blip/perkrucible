@@ -170,13 +170,19 @@ export function TradingCollection() {
           setUploadMessage(`Saving ${card.title}…`);
           const body = new FormData();
           body.set("title", card.title);
-          body.set("image", card.image, `${card.title}.webp`);
-          body.set("thumbnail", card.thumbnail, `${card.title}-thumbnail.webp`);
+          // Filenames are not used by the API; fixed ASCII names avoid browser
+          // FormData errors when uploaded card names contain unusual characters.
+          body.set("image", card.image, "card.webp");
+          body.set("thumbnail", card.thumbnail, "thumbnail.webp");
           const response = await fetch("/api/trade-cards", { method: "POST", body });
-          const data = await response.json();
+          const responseText = await response.text();
+          let data: { error?: string; card?: TradingCard } = {};
+          try { data = JSON.parse(responseText) as typeof data; } catch { /* Use the status fallback below. */ }
           if (!response.ok) throw new Error(data.error || `Could not save ${card.title}.`);
+          const savedCard = data.card;
+          if (!savedCard) throw new Error(`The server did not return the saved card (${response.status}).`);
           saved += 1;
-          setCards((current) => [...current, data.card]);
+          setCards((current) => [...current, savedCard]);
         }
       }
       setUploadMessage(`${saved} ${saved === 1 ? "card is" : "cards are"} now in the collection.`);
@@ -228,7 +234,7 @@ export function TradingCollection() {
   }
 
   return <main className={styles.page}>
-    <header className={styles.header}><div className={styles.titleRow}><h1>{collectionTitle}</h1><span className={styles.headerCount}>{cards.length} LEFT</span></div>
+    <header className={styles.header}><div className={styles.titleRow}><span className={styles.headerCount}>{cards.length} LEFT</span><h1>{collectionTitle}</h1></div>
       <p className={styles.description}>Every card shown is available to trade for a card of similar value. Select a card to see its details.</p>
     </header>
 
