@@ -6,13 +6,11 @@ import styles from "./photos.module.css";
 
 type Inquiry = { id: string; name: string; email: string; card_title: string; message: string; created_at: string };
 type PreparedCard = { title: string; image: Blob; thumbnail: Blob };
+const NEEDED_CARD_NUMBERS = ["017", "018", "019", "027", "028", "030", "031", "038", "043", "063", "064", "068", "078", "080", "083", "084", "085", "086", "098", "103", "106", "107", "112", "115", "116", "119", "122", "126", "129", "132", "133", "134", "138", "140", "142", "144", "145", "146", "147", "148", "150"];
+const REMOVED_NEEDED_CARDS_KEY = "perkrucible:removed-needed-cards:v1";
 const MAX_CARD_REQUEST_BYTES = 3_800_000;
 const MAX_CARD_IMAGE_BYTES = 3_550_000;
 const MAX_CARD_THUMBNAIL_BYTES = 250_000;
-
-function fileTitle(name: string) {
-  return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim().slice(0, 145) || "Trading card";
-}
 
 function encodeCanvas(canvas: HTMLCanvasElement, type: "image/webp" | "image/jpeg", quality: number) {
   return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("The image could not be prepared.")), type, quality));
@@ -70,7 +68,7 @@ async function prepareImage(file: File): Promise<PreparedCard[]> {
   const bitmap = await createImageBitmap(file);
   try {
     const images = await imageBlobs(bitmap, bitmap.width, bitmap.height);
-    return [{ title: fileTitle(file.name), ...images }];
+    return [{ title: "", ...images }];
   } finally { bitmap.close(); }
 }
 
@@ -95,7 +93,7 @@ async function preparePdf(file: File, onPage: (page: number, total: number) => v
       if (!context) throw new Error("This browser could not prepare a PDF page.");
       await page.render({ canvas, canvasContext: context, viewport }).promise;
       const images = await imageBlobs(canvas, canvas.width, canvas.height);
-      cards.push({ title: `${fileTitle(file.name)} · ${pageNumber}`, ...images });
+      cards.push({ title: "", ...images });
       page.cleanup();
     }
     return cards;
@@ -106,6 +104,9 @@ async function preparePdf(file: File, onPage: (page: number, total: number) => v
 
 export function TradingCollection() {
   const [cards, setCards] = useState<TradingCard[]>([]);
+  const [titleDrafts, setTitleDrafts] = useState<Record<string, string>>({});
+  const [removedNeededCards, setRemovedNeededCards] = useState<string[]>([]);
+  const [neededCardsOpen, setNeededCardsOpen] = useState(false);
   const [canManage, setCanManage] = useState(false);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -127,6 +128,7 @@ export function TradingCollection() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "The collection could not be loaded.");
       setCards(data.cards);
+      setTitleDrafts((current) => Object.fromEntries(data.cards.map((card: TradingCard) => [card.id, current[card.id] ?? card.title ?? ""])));
       setCanManage(Boolean(data.canManage));
       if (data.canManage) {
         const inboxResponse = await fetch("/api/trade-inquiries", { cache: "no-store" });
@@ -135,6 +137,16 @@ export function TradingCollection() {
     } catch (error) {
       setUploadMessage(error instanceof Error ? error.message : "The collection could not be loaded.");
     }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(REMOVED_NEEDED_CARDS_KEY);
+      if (saved) {
+        const parsed: unknown = JSON.parse(saved);
+        if (Array.isArray(parsed)) setRemovedNeededCards(parsed.filter((value): value is string => typeof value === "string" && NEEDED_CARD_NUMBERS.includes(value)));
+      }
+    } catch { /* Start with the full needed-card list when local storage is unavailable. */ }
   }, []);
 
   useEffect(() => {
@@ -203,6 +215,7 @@ export function TradingCollection() {
           if (!savedCard) throw new Error(`The server did not return the saved card (${response.status}).`);
           saved += 1;
           setCards((current) => [...current, savedCard]);
+          setTitleDrafts((current) => ({ ...current, [savedCard.id]: "" }));
         }
       }
       setUploadMessage(`${saved} ${saved === 1 ? "card is" : "cards are"} now in the collection.`);
@@ -222,6 +235,25 @@ export function TradingCollection() {
     if (activeId === card.id) closeCard();
   }
 
+  async function saveCardTitle(card: TradingCard) {
+    if (!canManage) return;
+    const title = (titleDrafts[card.id] ?? "").trim();
+    if (title === card.title) return;
+    const response = await fetch(`/api/trade-cards/${card.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, description: card.description ?? "" }) });
+    if (!response.ok) { setUploadMessage("The card title could not be saved."); setTitleDrafts((current) => ({ ...current, [card.id]: card.title })); return; }
+    const data = await response.json() as { card: TradingCard };
+    setCards((current) => current.map((item) => item.id === card.id ? { ...item, ...data.card } : item));
+  }
+
+  function removeNeededCard(number: string) {
+    if (!canManage) return;
+    setRemovedNeededCards((current) => {
+      const next = [...current, number];
+      try { window.localStorage.setItem(REMOVED_NEEDED_CARDS_KEY, JSON.stringify(next)); } catch { /* Keep the removal for this page session. */ }
+      return next;
+    });
+  }
+
   async function sendInquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!active) return;
@@ -230,7 +262,7 @@ export function TradingCollection() {
     const formElement = event.currentTarget;
     const form = new FormData(formElement);
     try {
-      const response = await fetch("/api/trade-inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: form.get("name"), email: form.get("email"), cardTitle: active.title, message: form.get("message"), website: form.get("website") }) });
+      const response = await fetch("/api/trade-inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: form.get("name"), email: form.get("email"), cardTitle: active.title || "Untitled trading card", message: form.get("message"), website: form.get("website") }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Your message could not be sent.");
       setFormMessage(result.emailSent ? "Your inquiry has been sent. Casey will reply to the email you provided." : "Your inquiry has been saved for Casey to review. He’ll reply to the email you provided.");
@@ -248,6 +280,15 @@ export function TradingCollection() {
       <p className={styles.description}>Every card shown is available to trade for a card of similar value.</p>
     </header>
 
+    <section className={styles.neededSection} aria-label="Needed cards">
+      <button type="button" className={styles.neededToggle} aria-expanded={neededCardsOpen} onClick={() => setNeededCardsOpen((open) => !open)}>VIEW MY NEEDED CARDS</button>
+      {neededCardsOpen && <div className={styles.neededPanel}>
+        <h2>CARDS I STILL NEED</h2>
+        <ul>{NEEDED_CARD_NUMBERS.filter((number) => !removedNeededCards.includes(number)).map((number) => <li key={number}><span>{number}</span>{canManage && <button type="button" onClick={() => removeNeededCard(number)} aria-label={`Remove ${number} from needed cards`}>×</button>}</li>)}</ul>
+        {!NEEDED_CARD_NUMBERS.some((number) => !removedNeededCards.includes(number)) && <p className={styles.neededEmpty}>All needed cards have been removed.</p>}
+      </div>}
+    </section>
+
     {canManage && <section className={styles.ownerPanel} aria-label="Manage collection">
       <h2>ADD CARDS</h2>
       <p>Choose card photos or a PDF from Files. Each PDF page becomes one card; scans work best with one card per page.</p>
@@ -262,10 +303,17 @@ export function TradingCollection() {
 
     <section id="album" className={styles.album} aria-label="Trading card collection">
       {cards.length ? <div className={styles.grid}>
-        {cards.map((card) => <article className={styles.card} key={card.id}>
+        {[...cards].sort((a, b) => {
+          const aTitle = (a.title || "").trim();
+          const bTitle = (b.title || "").trim();
+          if (!aTitle && bTitle) return 1;
+          if (aTitle && !bTitle) return -1;
+          return aTitle.localeCompare(bTitle, undefined, { numeric: true, sensitivity: "base" });
+        }).map((card) => <article className={styles.card} key={card.id}>
           <button className={styles.cardView} type="button" onClick={() => { setFormMessage(""); setActiveId(card.id); window.history.replaceState(null, "", `/photos#${encodeURIComponent(card.id)}`); }} aria-label={`Open trade inquiry for ${card.title}`}>
             <img src={card.thumbnailUrl} alt={card.title} loading="lazy" />
           </button>
+          <div className={styles.cardCaption}>{canManage ? <input aria-label="Card title" title="Edit card title" value={titleDrafts[card.id] ?? card.title ?? ""} maxLength={160} onChange={(event) => setTitleDrafts((current) => ({ ...current, [card.id]: event.currentTarget.value }))} onBlur={() => void saveCardTitle(card)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} /> : card.title && <span>{card.title}</span>}</div>
           {canManage && <button type="button" className={styles.cardDelete} onClick={() => void deleteCard(card)} aria-label={`Delete ${card.title}`} title="Delete card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3" /></svg></button>}
         </article>)}
       </div> : <div className={styles.empty}>

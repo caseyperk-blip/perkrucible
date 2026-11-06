@@ -28,8 +28,8 @@ export async function POST(request: Request) {
     const description = String(form.get("description") ?? "").trim();
     const image = form.get("image");
     const thumbnail = form.get("thumbnail");
-    if (!title || title.length > 160 || description.length > 3000 || !(image instanceof File) || !(thumbnail instanceof File)) {
-      return Response.json({ error: "Add an image with a card name; descriptions can be up to 3,000 characters." }, { status: 400 });
+    if (title.length > 160 || description.length > 3000 || !(image instanceof File) || !(thumbnail instanceof File)) {
+      return Response.json({ error: "Add a card image. Card names are optional and descriptions can be up to 3,000 characters." }, { status: 400 });
     }
     const supportedImageTypes = new Set(["image/webp", "image/jpeg"]);
     if (image.size > 4_000_000 || thumbnail.size > 500_000 || !supportedImageTypes.has(image.type) || !supportedImageTypes.has(thumbnail.type)) {

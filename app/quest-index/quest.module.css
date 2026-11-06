@@ -77,12 +77,12 @@
 
 .frameCorner,
 .frameEdge { position: absolute; pointer-events: none; }
-.frameCorner { z-index: 7; width: 112px; aspect-ratio: 1; background: url("/images/iron-frame-outer-corner-v3.png") left top / contain no-repeat; }
+.frameCorner { z-index: 7; width: 112px; aspect-ratio: 1; border: 1px solid #747778; background: linear-gradient(135deg,rgba(150,155,156,.2),transparent 46%,rgba(150,155,156,.12)); }
 .topLeft { left: 0; top: 0; }
 .topRight { right: 0; top: 0; transform: scaleX(-1); }
 .bottomLeft { left: 0; bottom: 0; transform: scaleY(-1); }
 .bottomRight { right: 0; bottom: 0; transform: scale(-1); }
-.frameEdge { z-index: 5; background: url("/images/iron-frame-outer-edge-v3.png") center / auto 100% repeat-x; }
+.frameEdge { z-index: 5; border-block: 1px solid #686d6e; background: linear-gradient(180deg,#292b2c,#070707 48%,#373a3b); }
 .edgeTop,
 .edgeBottom { left: 62px; right: 62px; height: 42px; }
 .edgeTop { top: 0; }

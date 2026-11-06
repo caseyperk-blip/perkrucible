@@ -49,6 +49,13 @@ export function PhotoTicker() {
   }, [cards]);
 
   const style = { "--card-scroll-duration": `${duration}s` } as CSSProperties;
+  const orderedCards = [...cards].sort((a, b) => {
+    const aTitle = (a.title || "").trim();
+    const bTitle = (b.title || "").trim();
+    if (!aTitle && bTitle) return 1;
+    if (aTitle && !bTitle) return -1;
+    return aTitle.localeCompare(bTitle, undefined, { numeric: true, sensitivity: "base" });
+  });
   return <section className={styles.section} aria-label="Trading card collection previews">
     <div className={styles.heading}>
       <h2>{collectionTitle}</h2>
@@ -57,8 +64,9 @@ export function PhotoTicker() {
     {cards.length > 0 && <div ref={windowRef} className={styles.window}>
       <div ref={trackRef} className={styles.track} data-overflow={overflowing} style={style}>
         {[0, ...(overflowing ? [1] : [])].map((copy) => <div className={styles.group} data-card-group={copy === 0 ? "primary" : undefined} aria-hidden={copy > 0} key={copy}>
-          {cards.map((card) => <Link className={styles.card} href={`/photos#${encodeURIComponent(card.id)}`} key={`${card.id}-${copy}`} aria-label={`View ${card.title}`}>
+          {orderedCards.map((card) => <Link className={styles.card} href={`/photos#${encodeURIComponent(card.id)}`} key={`${card.id}-${copy}`} aria-label={`View ${card.title || "trading card"}`}>
             <img src={card.thumbnailUrl} alt="" loading="lazy" />
+            {card.title && <span className={styles.cardTitle}>{card.title}</span>}
           </Link>)}
         </div>)}
       </div>

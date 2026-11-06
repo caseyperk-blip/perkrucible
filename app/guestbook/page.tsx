@@ -75,7 +75,6 @@ export default function GuestbookPage() {
       </form>
 
       <section className={styles.entries} aria-label="Guestbook messages">
-        <div className={styles.entriesHeading}><h2>Recent notes</h2></div>
         {error && entries.length === 0 ? <p className={styles.empty}>{error}</p> : entries.length === 0 ? <p className={styles.empty}>The first page is still blank. Leave the first note.</p> : <ol>
           {entries.map((entry) => <li key={entry.id}>
             <div className={styles.entryMeta}><strong>{entry.name}</strong><time dateTime={entry.createdAt}>{new Date(entry.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time></div>

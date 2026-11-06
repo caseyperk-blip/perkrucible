@@ -9,7 +9,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const input = await request.json() as { title?: unknown; description?: unknown };
     const title = typeof input.title === "string" ? input.title.trim() : "";
     const description = typeof input.description === "string" ? input.description.trim() : "";
-    if (!title || title.length > 160 || description.length > 3000) return Response.json({ error: "Enter a card name and a description up to 3,000 characters." }, { status: 400 });
+    if (title.length > 160 || description.length > 3000) return Response.json({ error: "Card names can be up to 160 characters and descriptions up to 3,000 characters." }, { status: 400 });
     const sql = await ensureTradingCardTables();
     const rows = await sql`UPDATE trade_cards SET title=${title},description=${description},updated_at=NOW() WHERE id=${id} RETURNING id,title,description,created_at`;
     return rows[0] ? Response.json({ card: rows[0] }) : Response.json({ error: "Card not found." }, { status: 404 });

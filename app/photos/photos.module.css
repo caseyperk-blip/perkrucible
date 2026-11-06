@@ -3,6 +3,16 @@
 .titleRow { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 16px; text-align: center; }
 .headerCount { color: #d7baa0; font: 11px/1.4 var(--font-geist-mono),monospace; letter-spacing: .14em; white-space: nowrap; }
 .description { max-width: 760px; margin: 16px auto 0; color: #c9c1ca; font: italic 16px/1.6 Georgia,serif; }
+.neededSection { position: relative; z-index: 3; margin: 0 0 20px; text-align: left; }
+.neededToggle { min-height: 42px; padding: 11px 15px; border: 1px solid rgba(232,220,207,.3); background: rgba(18,17,20,.92); color: #f4e9df; font: 9px/1.4 var(--font-geist-mono),monospace; letter-spacing: .1em; cursor: pointer; }
+.neededToggle:hover,.neededToggle:focus-visible { border-color: #e9c397; outline: none; }
+.neededPanel { width: min(580px,100%); margin-top: 8px; padding: 17px 18px; border: 1px solid rgba(232,220,207,.22); background: rgba(8,8,10,.96); box-shadow: 0 16px 42px rgba(0,0,0,.42); }
+.neededPanel h2 { margin: 0 0 12px; color: #edddcd; font: 10px/1.5 var(--font-geist-mono),monospace; letter-spacing: .15em; }
+.neededPanel ul { display: grid; grid-template-columns: repeat(auto-fill,minmax(64px,1fr)); gap: 6px; margin: 0; padding: 0; list-style: none; }
+.neededPanel li { display: flex; min-height: 35px; align-items: center; justify-content: space-between; padding: 0 8px; border: 1px solid rgba(232,220,207,.14); color: #e8dfda; font: 12px/1 var(--font-geist-mono),monospace; }
+.neededPanel li button { width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: #d7baa0; font: 20px/1 Georgia,serif; cursor: pointer; }
+.neededPanel li button:hover,.neededPanel li button:focus-visible { color: white; outline: 1px solid rgba(232,220,207,.45); }
+.neededEmpty { margin: 12px 0 0; color: #b7aeb7; font: 13px/1.5 Georgia,serif; }
 .ownerPanel,.album,.inbox { border: 1px solid rgba(232,220,207,.18); background: rgba(8,8,10,.52); }
 .ownerPanel { margin: 0 0 20px; padding: 18px 22px; }
 .ownerPanel h2,.inbox h2 { margin: 0 0 9px; color: #edddcd; font: 10px/1.5 var(--font-geist-mono),monospace; letter-spacing: .15em; }
@@ -20,6 +30,11 @@
 .cardView { display: block; width: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
 .cardView:focus-visible { outline: 2px solid #e9c397; outline-offset: 2px; }
 .cardView img { display: block; width: 100%; aspect-ratio: 0.72; object-fit: contain; background: #09090b; }
+.cardCaption { position: absolute; z-index: 1; right: 7px; bottom: 7px; left: 7px; min-height: 39px; display: flex; align-items: end; padding: 18px 9px 7px; background: linear-gradient(transparent,rgba(0,0,0,.86) 42%); color: #fff4eb; font: 12px/1.25 var(--font-geist-mono),monospace; text-shadow: 0 1px 4px #000; }
+.cardCaption span { max-width: 100%; overflow-wrap: anywhere; }
+.cardCaption input { width: 100%; min-width: 0; padding: 3px 0; border: 0; border-bottom: 1px solid rgba(245,220,198,.55); border-radius: 0; outline: none; background: transparent; color: inherit; font: inherit; text-shadow: inherit; }
+.cardCaption input::placeholder { color: rgba(255,244,235,.68); }
+.cardCaption input:focus { border-color: #f0c99c; }
 .cardDelete { position: absolute; z-index: 2; top: 11px; right: 11px; display: grid; width: 34px; height: 34px; place-items: center; padding: 8px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; background: rgba(12,12,14,.82); color: #fff; cursor: pointer; opacity: 0; transition: opacity .2s ease,background .2s ease; }
 .card:hover .cardDelete,.cardDelete:focus-visible { opacity: 1; }
 .cardDelete:hover { background: #743d40; }

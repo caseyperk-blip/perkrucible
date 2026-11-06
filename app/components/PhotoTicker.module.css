@@ -11,6 +11,7 @@
 .track[data-overflow="false"] .group { width: 100%; justify-content: space-between; }
 .card { position: relative; display: block; flex: 0 0 auto; width: clamp(130px,11vw,260px); height: clamp(155px,16vw,300px); overflow: hidden; border: 1px solid rgba(232,220,207,.2); color: white; text-decoration: none; }
 .card img { display: block; width: 100%; height: 100%; object-fit: contain; background: #08080a; transition: transform .5s ease; }
+.cardTitle { position: absolute; right: 0; bottom: 0; left: 0; padding: 27px 9px 8px; background: linear-gradient(transparent,rgba(0,0,0,.9)); color: #fff4eb; font: 10px/1.25 var(--font-geist-mono),monospace; text-shadow: 0 1px 4px #000; overflow-wrap: anywhere; }
 .card:hover img { transform: scale(1.05); }
 @keyframes scrollPhotos { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .track { animation: none; } }

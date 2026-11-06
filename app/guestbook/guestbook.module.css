@@ -17,11 +17,8 @@
 .honeypot { position: absolute!important; width: 1px!important; height: 1px!important; padding: 0!important; overflow: hidden!important; clip: rect(0,0,0,0)!important; white-space: nowrap!important; clip-path: inset(50%)!important; }
 .honeypot input { position: absolute; left: -10000px; }
 .entries { min-height: 370px; padding: clamp(20px,3vw,36px); }
-.entriesHeading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(232,220,207,.17); }
-.entriesHeading h2 { margin-bottom: 17px; }
-.entriesHeading span { color: #a291a3; font: 8px/1.4 var(--font-geist-mono),monospace; letter-spacing: .1em; }
-.entries ol { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
-.entries li { position: relative; padding: 20px 2px 22px; border-bottom: 1px solid rgba(232,220,207,.13); }
+.entries ol { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.entries li { position: relative; padding: 18px 20px; border: 1px solid rgba(232,220,207,.17); background: linear-gradient(140deg,rgba(35,31,34,.78),rgba(9,9,11,.82)); box-shadow: inset 0 0 24px rgba(0,0,0,.22),0 8px 22px rgba(0,0,0,.16); }
 .entryMeta { display: flex; align-items: baseline; justify-content: flex-start; gap: 10px; }
 .entryMeta strong { color: #f3d9c7; font: 400 20px/1.25 Georgia,serif; }
 .entryMeta time { flex: 0 0 auto; color: #8f8793; font: 9px/1.4 var(--font-geist-mono),monospace; }

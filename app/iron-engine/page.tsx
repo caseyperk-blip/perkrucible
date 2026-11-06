@@ -1007,7 +1007,7 @@ export default function IronEnginePage() {
 
         <header className={styles.titleSanctum}>
           <div className={styles.titleImageWrapTop}>
-            <img src="/images/iron-engine-title-v2.png" alt="Iron Engine" className={styles.titleImage} />
+            <h1 className={styles.engineTitle}>IRON ENGINE</h1>
           </div>
         </header>
 
