@@ -313,7 +313,7 @@ export function TradingCollection() {
           <button className={styles.cardView} type="button" onClick={() => { setFormMessage(""); setActiveId(card.id); window.history.replaceState(null, "", `/photos#${encodeURIComponent(card.id)}`); }} aria-label={`Open trade inquiry for ${card.title}`}>
             <img src={card.thumbnailUrl} alt={card.title} loading="lazy" />
           </button>
-          <div className={styles.cardCaption}>{canManage ? <input aria-label="Card title" title="Edit card title" value={titleDrafts[card.id] ?? card.title ?? ""} maxLength={160} onChange={(event) => setTitleDrafts((current) => ({ ...current, [card.id]: event.currentTarget.value }))} onBlur={() => void saveCardTitle(card)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} /> : card.title && <span>{card.title}</span>}</div>
+          <div className={styles.cardCaption}>{canManage ? <input aria-label="Card title" title="Edit card title" value={titleDrafts[card.id] ?? card.title ?? ""} maxLength={160} onChange={(event) => { const value = event.currentTarget.value; setTitleDrafts((current) => ({ ...current, [card.id]: value })); }} onBlur={() => void saveCardTitle(card)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} /> : card.title && <span>{card.title}</span>}</div>
           {canManage && <button type="button" className={styles.cardDelete} onClick={() => void deleteCard(card)} aria-label={`Delete ${card.title}`} title="Delete card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3" /></svg></button>}
         </article>)}
       </div> : <div className={styles.empty}>
