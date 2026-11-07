@@ -30,10 +30,10 @@ export const metadata: Metadata = {
     description: "A personal archive and repository of phantasmagoric information.",
     images: [
       {
-        url: "/images/perkrucible-social-preview.jpg",
+        url: "/images/perkrucible-archive-badge.png",
         width: 2172,
         height: 724,
-        alt: "PERKRUCIBLE — Personal Archive",
+        alt: "PERKRUCIBLE personal archive badge",
       },
     ],
   },
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PERKRUCIBLE",
     description: "A personal archive and repository of phantasmagoric information.",
-    images: ["/images/perkrucible-social-preview.jpg"],
+    images: ["/images/perkrucible-archive-badge.png"],
   },
 };
 
