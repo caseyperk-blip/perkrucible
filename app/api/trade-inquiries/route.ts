@@ -19,7 +19,10 @@ export async function GET() {
   if (!await isCollectionOwner()) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const sql = await ensureTradingCardTables();
-    const rows = await sql`SELECT id,name,email,card_title,message,created_at FROM trade_inquiries ORDER BY created_at DESC LIMIT 100` as Inquiry[];
+    const rows = await sql`SELECT inquiries.id,inquiries.name,inquiries.email,COALESCE(NULLIF(cards.title,''),inquiries.card_title) AS card_title,inquiries.message,inquiries.created_at
+      FROM trade_inquiries AS inquiries
+      LEFT JOIN trade_cards AS cards ON cards.id = inquiries.card_id
+      ORDER BY inquiries.created_at DESC LIMIT 100` as Inquiry[];
     return Response.json({ inquiries: rows }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Unable to load trading inquiries", error);
@@ -29,20 +32,23 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const input = await request.json() as { name?: unknown; email?: unknown; cardTitle?: unknown; message?: unknown; website?: unknown };
+    const input = await request.json() as { name?: unknown; email?: unknown; cardId?: unknown; message?: unknown; website?: unknown };
     if (typeof input.website === "string" && input.website.trim()) return Response.json({ sent: true }, { status: 201 });
     const name = typeof input.name === "string" ? input.name.trim().replace(/\s+/g, " ") : "";
     const email = typeof input.email === "string" ? input.email.trim() : "";
-    const cardTitle = typeof input.cardTitle === "string" ? input.cardTitle.trim() : "";
+    const cardId = typeof input.cardId === "string" ? input.cardId.trim() : "";
     const message = typeof input.message === "string" ? input.message.trim() : "";
-    if (!name || name.length > 80 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 320 || !cardTitle || cardTitle.length > 160 || !message || message.length > 3000) {
+    if (!name || name.length > 80 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 320 || !/^[0-9a-f-]{36}$/i.test(cardId) || !message || message.length > 3000) {
       return Response.json({ error: "Please enter your name, a valid email, and a message." }, { status: 400 });
     }
     const sql = await ensureTradingCardTables();
+    const cardRows = await sql`SELECT title FROM trade_cards WHERE id=${cardId}` as Array<{ title: string }>;
+    if (!cardRows[0]) return Response.json({ error: "That card is no longer in the collection." }, { status: 404 });
+    const cardTitle = cardRows[0].title.trim() || "Untitled trading card";
     const key = rateKey(request);
     const countRows = await sql`SELECT COUNT(*)::int AS amount FROM trade_inquiries WHERE rate_key=${key} AND created_at > NOW() - INTERVAL '1 hour'` as Array<{ amount: number }>;
     if (countRows[0].amount >= 5) return Response.json({ error: "Please wait a little before sending another inquiry." }, { status: 429 });
-    const rows = await sql`INSERT INTO trade_inquiries (name,email,card_title,message,rate_key) VALUES (${name},${email},${cardTitle},${message},${key}) RETURNING id`;
+    const rows = await sql`INSERT INTO trade_inquiries (name,email,card_id,card_title,message,rate_key) VALUES (${name},${email},${cardId},${cardTitle},${message},${key}) RETURNING id`;
 
     let emailSent = false;
     const apiKey = process.env.RESEND_API_KEY;

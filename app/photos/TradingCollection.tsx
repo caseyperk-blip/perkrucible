@@ -262,7 +262,7 @@ export function TradingCollection() {
     const formElement = event.currentTarget;
     const form = new FormData(formElement);
     try {
-      const response = await fetch("/api/trade-inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: form.get("name"), email: form.get("email"), cardTitle: active.title || "Untitled trading card", message: form.get("message"), website: form.get("website") }) });
+      const response = await fetch("/api/trade-inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: form.get("name"), email: form.get("email"), cardId: active.id, message: form.get("message"), website: form.get("website") }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Your message could not be sent.");
       setFormMessage(result.emailSent ? "Your inquiry has been sent. Casey will reply to the email you provided." : "Your inquiry has been saved for Casey to review. He’ll reply to the email you provided.");

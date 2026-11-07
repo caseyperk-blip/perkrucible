@@ -20,12 +20,26 @@ export async function ensureTradingCardTables() {
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(80) NOT NULL,
     email VARCHAR(320) NOT NULL,
+    card_id UUID REFERENCES trade_cards(id) ON DELETE SET NULL,
     card_title VARCHAR(160) NOT NULL,
     message VARCHAR(3000) NOT NULL,
     rate_key CHAR(64),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
+    await sql`ALTER TABLE trade_inquiries ADD COLUMN IF NOT EXISTS card_id UUID REFERENCES trade_cards(id) ON DELETE SET NULL`;
+    await sql`WITH uniquely_named_cards AS (
+      SELECT title, (array_agg(id))[1] AS id
+      FROM trade_cards
+      WHERE title <> ''
+      GROUP BY title
+      HAVING COUNT(*) = 1
+    )
+    UPDATE trade_inquiries AS inquiry
+    SET card_id = cards.id
+    FROM uniquely_named_cards AS cards
+    WHERE inquiry.card_id IS NULL AND inquiry.card_title = cards.title`;
     await sql`CREATE INDEX IF NOT EXISTS trade_inquiries_created_at_idx ON trade_inquiries (created_at DESC)`;
+    await sql`CREATE INDEX IF NOT EXISTS trade_inquiries_card_id_idx ON trade_inquiries (card_id)`;
     await sql`CREATE INDEX IF NOT EXISTS trade_inquiries_rate_created_idx ON trade_inquiries (rate_key, created_at DESC)`;
   })().catch((error) => { schemaSetup = null; throw error; });
   await schemaSetup;
